@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>The Amazing Picasso – ToolBox</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../style.css" />
+
+    <!-- Styles spécifiques ToolBox (transversal / innovations / wiki) -->
+    <style>
+
+        /* ambiance "ToolBox" : sobre, clean, mais un peu techno */
+        .toolbox-hero-chiprow {
+            display: flex;
+            gap: 0.6rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .toolbox-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.85);
+            border: 1px solid rgba(17,24,39,0.10);
+            box-shadow: 0 14px 30px rgba(17,24,39,0.08);
+            font-weight: 700;
+            color: rgba(17,24,39,0.75);
+        }
+
+        /* Carte tilt (screen) */
+        .tilt-card {
+            border-radius: 22px;
+            background: rgba(255,255,255,0.88);
+            border: 1px solid rgba(209,213,219,0.9);
+            box-shadow: 0 22px 65px rgba(17,24,39,0.12);
+            overflow: hidden;
+            transform-style: preserve-3d;
+            will-change: transform;
+            transition: transform 0.18s ease;
+        }
+
+        .tilt-card .tilt-inner {
+            transform-style: preserve-3d;
+        }
+
+        .tilt-card .tilt-media {
+            position: relative;
+            aspect-ratio: 16/9;
+            background: linear-gradient(120deg, rgba(99,102,241,0.12), rgba(236,72,153,0.10), rgba(249,115,22,0.10));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tilt-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transform: translateZ(18px);
+        }
+
+        .tilt-card .tilt-overlay {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.45), transparent 55%);
+            opacity: 0.55;
+            mix-blend-mode: screen;
+            transition: opacity 0.2s ease;
+        }
+
+        .tilt-card .tilt-footer {
+            padding: 1rem 1.1rem 1.1rem;
+        }
+
+        .tilt-card .tilt-title {
+            font-size: 1.25rem;
+            font-weight: 900;
+            margin-bottom: 0.35rem;
+        }
+
+        .tilt-card .tilt-text {
+            color: #4b5563;
+            font-size: 1.05rem;
+            margin-bottom: 0.7rem;
+        }
+
+        .tilt-card .tilt-actions {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-soft {
+            border: none;
+            cursor: pointer;
+            padding: 0.55rem 0.85rem;
+            border-radius: 999px;
+            background: rgba(17,24,39,0.06);
+            color: rgba(17,24,39,0.80);
+            font-weight: 800;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .btn-soft:hover { transform: translateY(-2px); background: rgba(17,24,39,0.09); }
+
+        .btn-accent {
+            border: none;
+            cursor: pointer;
+            padding: 0.55rem 0.9rem;
+            border-radius: 999px;
+            background: linear-gradient(120deg, rgba(249,115,22,0.95), rgba(236,72,153,0.92), rgba(99,102,241,0.92));
+            color: white;
+            font-weight: 900;
+            box-shadow: 0 18px 45px rgba(249,115,22,0.22);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn-accent:hover { transform: translateY(-2px); box-shadow: 0 24px 60px rgba(236,72,153,0.22); }
+
+        /* Bloc "boîte à outils" : layout alterné (évite copier/coller) */
+        .toolbox-grid {
+            display: grid;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        @media (max-width: 900px) {
+            .toolbox-grid { grid-template-columns: minmax(0, 1fr); }
+        }
+
+        .toolbox-2rows {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .toolbox-side {
+            border-radius: 22px;
+            background: rgba(255,255,255,0.88);
+            border: 1px solid rgba(209,213,219,0.9);
+            padding: 1.2rem 1.2rem 1.25rem;
+            box-shadow: 0 18px 50px rgba(17,24,39,0.10);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .toolbox-side::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top left, rgba(99,102,241,0.12), transparent 55%);
+            pointer-events: none;
+        }
+
+        .toolbox-side h3 {
+            font-size: 1.35rem;
+            margin-bottom: 0.45rem;
+            position: relative;
+        }
+
+        .toolbox-side p {
+            color: #4b5563;
+            font-size: 1.08rem;
+            position: relative;
+        }
+
+        .toolbox-check {
+            margin-top: 1rem;
+            display: grid;
+            gap: 0.65rem;
+            position: relative;
+        }
+
+        .toolbox-check .row {
+            display: flex;
+            gap: 0.7rem;
+            align-items: flex-start;
+            padding: 0.7rem 0.8rem;
+            border-radius: 18px;
+            background: rgba(249,250,251,0.75);
+            border: 1px solid rgba(17,24,39,0.08);
+        }
+
+        .toolbox-check .row strong { display: block; }
+        .toolbox-check .row span { display: block; color: #6b7280; font-size: 0.98rem; margin-top: 0.12rem; }
+
+
+        /* --- FIX header (doit rester fixed et visible au scroll) --- */
+        body.toolbox-page .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 80;
+        }
+
+        /* --- WikiPic embed (réplique visuelle) --- */
+        .wikipic-embed {
+            border-radius: 22px;
+            border: 1px solid rgba(17,24,39,0.12);
+            background: rgba(255,255,255,0.85);
+            box-shadow: 0 24px 70px rgba(17,24,39,0.14);
+            overflow: hidden;
+        }
+
+        .wikipic-app {
+            display: grid;
+            grid-template-columns: 300px minmax(0, 1fr);
+            min-height: 640px;
+            background: #f2f2f2;
+        }
+
+        .wikipic-sidebar {
+            background: #ededed;
+            border-right: 2px solid rgba(17,24,39,0.35);
+            padding: 22px 18px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .wikipic-brand-title {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            color: #0b1a3a;
+            font-size: 34px;
+        }
+
+        .wikipic-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .wikipic-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 14px;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            background: transparent;
+            font-size: 20px;
+            color: #111827;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .wikipic-item:hover {
+            background: rgba(255,255,255,0.55);
+            border-color: rgba(17,24,39,0.12);
+        }
+
+        .wikipic-item.is-active {
+            background: rgba(255,255,255,0.85);
+            border-color: rgba(17,24,39,0.18);
+        }
+
+        .wikipic-ico {
+            width: 28px;
+            display: inline-flex;
+            justify-content: center;
+        }
+
+        .wikipic-item.is-collapsible {
+            border: 1px solid transparent;
+        }
+
+        .wikipic-chevron {
+            margin-left: auto;
+            opacity: 0.55;
+        }
+
+        .wikipic-subnav {
+            margin-left: 44px;
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            padding: 2px 0 6px;
+        }
+
+        .wikipic-subnav.is-open { display: flex; }
+
+        .wikipic-subitem {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+            font-size: 18px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: transparent;
+            border: 1px solid transparent;
+            color: #111827;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .wikipic-subitem:hover {
+            background: rgba(255,255,255,0.55);
+            border-color: rgba(17,24,39,0.12);
+        }
+
+        .wikipic-subitem.is-active {
+            background: rgba(255,255,255,0.85);
+            border-color: rgba(17,24,39,0.18);
+        }
+
+        .wikipic-footer {
+            margin-top: auto;
+            font-size: 13px;
+            color: rgba(17,24,39,0.62);
+            text-align: center;
+            padding-top: 12px;
+        }
+
+        .wikipic-content {
+            background: #f8f8f8;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .wikipic-topbar {
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 18px;
+            border-bottom: 2px solid rgba(17,24,39,0.35);
+            background: #eeeeee;
+        }
+
+        .wikipic-topbar-path {
+            font-size: 18px;
+            color: rgba(17,24,39,0.70);
+        }
+
+        .wikipic-topbar-logo {
+            width: 44px;
+            height: 44px;
+            border-radius: 999px;
+            background: #0b1a3a;
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            letter-spacing: 0.06em;
+        }
+
+        .wikipic-article {
+            padding: 22px 24px 36px;
+            max-width: 900px;
+        }
+
+        .wikipic-h1 {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+            font-size: 64px;
+            line-height: 0.98;
+            margin: 12px 0 14px;
+            letter-spacing: -0.02em;
+            color: #0b1a3a;
+        }
+
+        .wikipic-h2 {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+            font-size: 34px;
+            margin: 26px 0 12px;
+            color: #0b1a3a;
+        }
+
+        .wikipic-p {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+            font-size: 16px;
+            line-height: 1.9;
+            color: #111827;
+            margin-bottom: 16px;
+        }
+
+        /* WikiPic: cards list for fiches (Locaux > Bar) */
+        .wikipic-cards {
+            margin-top: 18px;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        @media (max-width: 900px) {
+            .wikipic-cards { grid-template-columns: 1fr; }
+        }
+
+        .wikipic-card {
+            border-radius: 14px;
+            border: 1px solid rgba(17,24,39,0.14);
+            background: rgba(255,255,255,0.86);
+            padding: 12px 12px;
+            text-align: left;
+            cursor: pointer;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+        }
+
+        .wikipic-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 18px 40px rgba(17,24,39,0.10);
+            background: rgba(255,255,255,0.92);
+        }
+
+        .wikipic-card-title {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+            font-weight: 900;
+            font-size: 18px;
+            color: #0b1a3a;
+            margin-bottom: 4px;
+        }
+
+        .wikipic-card-meta {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+            font-size: 13px;
+            color: rgba(17,24,39,0.70);
+        }
+
+        .wikipic-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 6px 0 10px;
+        }
+
+        .wikipic-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 8px;
+            border-radius: 999px;
+            border: 1px solid rgba(17,24,39,0.14);
+            background: rgba(255,255,255,0.70);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+            font-size: 12px;
+            color: rgba(17,24,39,0.78);
+        }
+
+        .wikipic-badge.ok {
+            background: rgba(34,197,94,0.18);
+            border-color: rgba(34,197,94,0.35);
+            color: rgba(12,110,52,0.95);
+        }
+
+        .wikipic-kv {
+            margin-top: 8px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px dashed rgba(17,24,39,0.22);
+            background: rgba(249,250,251,0.75);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+            font-size: 13px;
+            color: rgba(17,24,39,0.80);
+        }
+
+        .wikipic-figure {
+            margin: 14px 0 10px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(17,24,39,0.14);
+            background: rgba(255,255,255,0.70);
+        }
+
+        .wikipic-figure img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .wikipic-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+            font-size: 13px;
+        }
+
+        .wikipic-table th,
+        .wikipic-table td {
+            border: 1px solid rgba(17,24,39,0.18);
+            padding: 8px 10px;
+            vertical-align: top;
+            background: rgba(255,255,255,0.70);
+        }
+
+        .wikipic-table th {
+            background: rgba(238,238,238,0.95);
+            font-weight: 900;
+            color: #0b1a3a;
+        }
+
+        @media (max-width: 980px) {
+            .wikipic-app { grid-template-columns: 1fr; }
+            .wikipic-sidebar { border-right: none; border-bottom: 2px solid rgba(17,24,39,0.35); }
+            .wikipic-h1 { font-size: 52px; }
+        }
+
+        .mini-terminal {
+            margin-top: 1rem;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid rgba(17,24,39,0.12);
+            background: rgba(17,24,39,0.92);
+            box-shadow: 0 18px 55px rgba(17,24,39,0.18);
+        }
+
+        .mini-terminal .bar {
+            background: rgba(255,255,255,0.06);
+            padding: 0.55rem 0.8rem;
+            display: flex;
+            gap: 0.35rem;
+            align-items: center;
+        }
+
+        .dot { width: 10px; height: 10px; border-radius: 999px; background: rgba(255,255,255,0.22); }
+
+        .mini-terminal pre {
+            margin: 0;
+            padding: 0.85rem 0.95rem 1.0rem;
+            font-size: 0.98rem;
+            color: rgba(255,255,255,0.86);
+            line-height: 1.55;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+
+<body id="top" class="toolbox-page">
+<div class="page">
+
+    <!-- HEADER (même structure que les autres pages) -->
+    <header class="site-header">
+        <div class="site-header-inner">
+            <div class="header-bar max-w">
+
+                <!-- NAV GAUCHE -->
+                <nav class="site-nav site-nav-left">
+                    <a href="animation.html">Animation</a>
+                    <a href="appro.html">Appro</a>
+                    <a href="com.html">Com</a>
+                    <a href="estu.html">Estu</a>
+                </nav>
+
+                <!-- LOGO CENTRÉ -->
+                <div class="logo-container">
+                    <a href="../index.html#top" class="logo-link">
+                        <img
+                                src="../../assets/TheAmazingPicasso.png"
+                                alt="The Amazing Picasso"
+                                class="logo-image"
+                        />
+                    </a>
+                </div>
+
+                <!-- NAV DROITE -->
+                <nav class="site-nav site-nav-right">
+                    <a href="info.html">Info</a>
+                    <a href="locaux.html">Locaux</a>
+                    <a href="rse.html">RSE</a>
+                    <a href="treso.html">Tréso</a>
+                </nav>
+
+            </div>
+        </div>
+    </header>
+
+    <main>
+
+        <!-- HERO -->
+        <section class="hero">
+            <div class="max-w hero-inner reveal" data-parallax="0.02">
+                <div class="hero-kicker">Axes du projet</div>
+                <h1 class="hero-title">
+                    ToolBox<br />
+                    <span>RSE · Innovations · Transmission</span>
+                </h1>
+                <p class="hero-subtitle">
+                    C’est quoi cette team de con ? <br>
+                    J'en reparle un peu plus bas pour répondre à vos questions :<br>
+                    <b>Qu'est-ce</b> que c'est que ce site / cette candidature ?<br>
+                    <b>Pourquoi</b> il candidate lui ?<br>
+                    <b>Pour quoi</b> il candidate lui ?
+                </p>
+
+                <div class="toolbox-hero-chiprow" aria-hidden="true">
+                    <span class="toolbox-chip">🧰 Rôle transversal</span>
+                    <span class="toolbox-chip">🌱 RSE</span>
+                    <span class="toolbox-chip">🧠 Transmission (Pic 101)</span>
+                    <span class="toolbox-chip">⚡ Pousser les projets</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- POSITIONNEMENT (layout alterné) -->
+        <section class="section">
+            <div class="max-w">
+                <div class="section-header reveal">
+                    <div class="section-kicker">je comprend plus rien</div>
+                    <h2 class="section-title">TRANS-VER-SA-LI-TÉ</h2>
+                    <p class="section-subtitle" style="max-width: 40rem">
+                        Non je veux pas demander d'être Toolbox au Pic (mais pas loin ?? 🤨).
+                        <br>Ce n'est pas un passage que je comptais mettre sur ce site mais plutôt en parler de vive voix avec vous, je serais donc assez bref ici.
+                        <br><br>Il me paraissait évident que ce semestre serais mon dernier MAIS 1. votre plan de rôle RSE à part entière ma plutôt bien chauffé et 2. de toute façon je ne pouvais pas me permettre de rater l'occasion de faire une dernière candidature pour mon foyer favori <3 <3 <3 (cœur cœur) -objectivement ma meilleure je pense-
+                        <br><br>Alors RSE à part entière ? Oui et j'ai 2/3 idées (seulement 2 ou 3 pas plus), que vous avez pu voir en parcourant ce site.
+                        <br>Et voici quelques points en plus sur ma motivation et une dernière petite surprise sur l'intérêt que je trouve à ce rôle RSE (et l'intérêt de faire un semestre de + au Pic).
+                    </p>
+                </div>
+
+                <div class="toolbox-grid">
+                    <div class="reveal">
+                        <div class="projects-list" style="margin-top: 0;">
+                            <div class="project-card">
+                                <div class="project-title">🧩 Transversal entre les teams</div>
+                                <div class="project-meta">appro · tréso · com · anim · locaux · rse</div>
+                                <div class="project-text">
+                                    Un projet touche rarement une seule équipe.
+                                    <br>Le but est de servir de “pont” :
+                                    Déjà c'est cool parce que ça favorise la transversalité de voir des gens faire de la transversalité (et ça c'est cool) et c'est cool pour décharger les autres ou enfin mener des projets que j'ai pas eu le temps de faire depuis tout ce temps.
+                                </div>
+                            </div>
+
+                            <div class="project-card">
+                                <div class="project-title">🛟 Backup sur les gros sujets</div>
+                                <div class="project-meta">Estu · commissions · sujets chiants mais vitaux</div>
+                                <div class="project-text">
+                                    Backup quand ça chauffe : checklists, docs, outils, retours d’expérience.
+                                    Exemple : commissions incendie, Estu, transmission.
+                                </div>
+                            </div>
+
+                            <div class="project-card">
+                                <div class="project-title">🗺️ Roadmap des “pépites” oubliées</div>
+                                <div class="project-meta">candidatures passées · idées non finies · TODO clean</div>
+                                <div class="project-text">
+                                    Refaire un point sur toutes les idées proposées depuis des années :
+                                    on tri, on priorise, on remet au propre dans une TODO & une roadmap claire.
+                                </div>
+                            </div>
+
+                            <div class="project-card">
+                                <div class="project-title">🤓️ Les idées de ce super site wsh ?</div>
+                                <div class="project-meta">J'ai l'impression d'avoir faire une candid prez c quoi ce bazar ?</div>
+                                <div class="project-text">
+                                    Ce site (candidature ??) rassemble beaucoup d'idées, certaines vagues / bateaux / infaisables, mais la plus part sont à mon sens de vrai + pour le Pic (surtout d'un point de vue RSE).
+                                </div>
+                            </div>
+
+                            <div class="project-card">
+                                <div class="project-title">👴 La transmission</div>
+                                <div class="project-meta">formaliser · retransmission · rédiger</div>
+                                <div class="project-text">
+                                    J'ai, grâce à ces nombreux semestres passés dans notre foyer, eu la chance de me rendre compte à quel point le savoir et la connaissance du foyer est vaste (quasi interminable) et retrouver / chercher / transmettre des infos n'est pas toujours facile.
+                                    <br><b>Énormément</b> des connaissances sont transmise à l'oral et cela n'en facilite pas l'accessibilité. Cela fait plusieurs semestres maintenant que j'essaye de garder une trace écrite de certaines choses un peu niches.
+                                    <br>Je vous laisse donc voir ci-après un "petit" projet sur lequel je travaille depuis un petit temps (et qui sera mon fil rouge pour le semestre prochain).
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PIC 101 : la pièce centrale -->
+        <section class="section">
+            <div class="max-w">
+                <div class="section-header reveal">
+                    <div class="section-kicker">Le gros projet du semestre</div>
+                    <h2 class="section-title">Pic 101 (WikiPic / WiPic / WePic)</h2>
+                    <p class="section-subtitle">
+                        Un vrai outil de passation : pédagogie, transmission, procédures.
+                        L’objectif : transformer le <strong>savoir oral</strong> (qui se perd) en <strong>connaissance retrouvable</strong>.
+                    </p>
+                </div>
+
+                <!-- Carte tilt avec screenshot -->
+                <div class="reveal" style="max-width: 980px; margin: 0 auto;">
+                    <div class="tilt-card" data-tilt data-parallax="0.01" aria-label="Aperçu Pic 101">
+                        <div class="tilt-inner">
+                            <div class="tilt-media">
+                                <!-- Remplace ce src par TON screenshot -->
+                                <img src="../../assets/AccueilPic101.png" alt="Aperçu Pic 101 (screenshot)">
+                            </div>
+                            <div class="tilt-footer">
+                                <div class="tilt-title">🧠 Pic 101</div>
+                                <div class="tilt-text">
+                                    Maquette déjà faite + gros travail préliminaire (2 mois) : formalisation, process de création,
+                                    structure des fiches…
+                                    <br><br>L’idée : que tout le monde puisse contribuer, tel le Wiki du BDE mais en interne au Pic.
+                                    <br>Le but ? <b>TOUT</b> documenter ! Tout ? Oui oui tout... Des erreurs fréquentes de la machine à café et comment les régler à la couleur des ficelles des saucissons pour reconnaitre les goûts même sans les étiquettes (ouais vraiment pousée celle là) en passant par les procédures administratives, les équipements ou l'animation.
+                                    <br><br>Bref le travail d'une vie hein. C'est ici l'intérêt d'un site collaboratif, servir d'outil au quotidien, de passation et tout en restant en constante évolution avec les changements au fil des semestres.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mini-terminal reveal" style="max-width: 980px; margin: 1.2rem auto 0;" aria-hidden="true">
+                    <div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span style="margin-left:0.6rem; opacity:0.75; font-weight:800; color: white">toolbox@picasso</span></div>
+                    <pre>
+> objectif: rendre l’info retrouvable
+> problème: trop de savoir oral -> se perd
+> solution: wiki clair + fiches + recherche + passation
+> bonus: base solide pour les passations futures
+          </pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- WIKIPIC EMBED : réplique (Accueil + catégories) -->
+        <section class="section" id="wikipicDemo">
+            <div class="max-w">
+                <div class="section-header reveal">
+                    <div class="section-kicker">Démo</div>
+                    <h2 class="section-title">Réplique du WikiPic</h2>
+                    <p class="section-subtitle">
+                        Bon juste pour l'illustrer si ce n'est pas clair (je pense que ça va), voici une <i>mini version démo</i> ne comportant que le squelette et une fiche en exemple.
+                        <br><br>Pour la demo : toutes les catégories (pages principales uniquement) + Catégorie Locaux avec les sous sections (Bar/Salle/Réserve/Extérieur) + fiche d'exemple pour la Machine à café.
+                        <br><br>(Et oui je sais c'est frustrant mais Rôme ne sait pas fait en 1 jours - c'était 5 jours ouvrés je crois - 🤓)
+                    </p>
+                </div>
+
+                <div class="wikipic-embed reveal" data-parallax="0.01" aria-label="Aperçu embarqué du WikiPic">
+                    <div class="wikipic-app">
+                        <!-- Sidebar -->
+                        <aside class="wikipic-sidebar" aria-label="Menu WikiPic">
+                            <div class="wikipic-brand">
+                                <div class="wikipic-brand-title">PIC 101</div>
+                            </div>
+
+                            <nav class="wikipic-nav">
+                                <button class="wikipic-item is-active" type="button" data-wiki-page="accueil" aria-current="page">
+                                    <span class="wikipic-ico">🏠</span> Accueil
+                                </button>
+
+                                <button class="wikipic-item" type="button" data-wiki-page="animations">
+                                    <span class="wikipic-ico">🎬</span> Animations
+                                </button>
+
+                                <button class="wikipic-item" type="button" data-wiki-page="appro-soft">
+                                    <span class="wikipic-ico">☕</span> Appro - soft
+                                </button>
+
+                                <button class="wikipic-item" type="button" data-wiki-page="appro-biere">
+                                    <span class="wikipic-ico">🛒</span> Appro - bière
+                                </button>
+
+                                <button class="wikipic-item" type="button" data-wiki-page="communication">
+                                    <span class="wikipic-ico">✏️</span> Communication
+                                </button>
+
+                                <button class="wikipic-item" type="button" data-wiki-page="general">
+                                    <span class="wikipic-ico">ℹ️</span> Général
+                                </button>
+
+                                <button class="wikipic-item" type="button" data-wiki-page="informatique">
+                                    <span class="wikipic-ico">💻</span> Informatique
+                                </button>
+
+                                <button class="wikipic-item is-collapsible" type="button" aria-expanded="true" data-wiki-toggle="locaux" data-wiki-page="locaux">
+                                    <span class="wikipic-ico">🧷</span> Locaux
+                                    <span class="wikipic-chevron" data-wiki-chevron="locaux" aria-hidden="true">▾</span>
+                                </button>
+
+                                <div class="wikipic-subnav is-open" data-wiki-subnav="locaux">
+                                    <button class="wikipic-subitem is-active" type="button" data-wiki-page="locaux-bar">Bar</button>
+                                    <button class="wikipic-subitem" type="button" data-wiki-page="locaux-salle">Salle</button>
+                                    <button class="wikipic-subitem" type="button" data-wiki-page="locaux-reserve">Réserve</button>
+                                    <button class="wikipic-subitem" type="button" data-wiki-page="locaux-exterieur">Extérieur</button>
+                                </div>
+
+                                <button class="wikipic-item" type="button" data-wiki-page="presidence">
+                                    <span class="wikipic-ico">👑</span> Présidence
+                                </button>
+
+                                <button class="wikipic-item" type="button" data-wiki-page="tresorerie">
+                                    <span class="wikipic-ico">💰</span> Trésorerie
+                                </button>
+                            </nav>
+
+                            <div class="wikipic-footer">
+                                Made with ❤️ © 2025 PVDC · Picasso UTC
+                            </div>
+                        </aside>
+
+                        <!-- Content -->
+                        <div class="wikipic-content">
+                            <div class="wikipic-topbar">
+                                <div class="wikipic-topbar-path">Accueil</div>
+                                <div class="wikipic-topbar-logo" aria-hidden="true">PIC</div>
+                            </div>
+
+                            <article class="wikipic-article">
+                                <h1 class="wikipic-h1">PIC 101</h1>
+
+                                <h2 class="wikipic-h2">Accueil</h2>
+
+                                <p class="wikipic-p">
+                                    Bienvenue sur <strong>PIC 101</strong> : un wiki collaboratif pour rendre l’info du Pic <strong>retrouvable</strong>
+                                    (procédures, checklists, matériel, contacts, bonnes pratiques).
+                                </p>
+
+                                <p class="wikipic-p">
+                                    Ici, on documente ce qui se perd souvent à l’oral : <strong>où est quoi</strong>, <strong>comment on fait</strong>,
+                                    <strong>qui appeler</strong>, et <strong>quels pièges éviter</strong>.
+                                </p>
+
+                                <p class="wikipic-p">
+                                    Pour la démo : les catégories principales sont cliquables. Locaux garde ses sous-catégories (Bar/Salle/Réserve/Extérieur).
+                                </p>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <div style="margin-top: 3rem"></div>
+        <section class="section">
+            <div class="max-w">
+                <div class="section-header reveal">
+                    <div class="section-kicker">T'as oublié des trucs nan ?</div>
+                    <h2 class="section-title">Ok ok mais y a encore des points à clarifier</h2>
+                    <p class="section-subtitle" style="max-width: 40rem">
+                        Ah bah oui chuis en full entreprise moi chuis con...
+                        <br>MAIS j'y ai pensé évidement. Encore une fois plus à détailler avec vous directement.
+                    </p>
+                </div>
+
+                <div class="toolbox-2rows">
+                    <div class="reveal">
+                        <div class="projects-list" style="margin-top: 0;">
+                            <div class="project-card">
+                                <div class="project-title">📍 Localisation</div>
+                                <div class="project-meta">C'est pas hyper loin je crois</div>
+                                <div class="project-text">
+                                    Je suis à Compiègne, une ville dans l'Oise chais pas si tu vois, ce qui est déjà plutôt une bonne nouvelle aka dans la même ville que l'UTC (et le Pic bah oui faut suivre). (Youhouuu)
+                                </div>
+                            </div>
+
+                            <div class="project-card">
+                                <div class="project-title">😴 Jour Off</div>
+                                <div class="project-meta">J'ai plus de vanne là...</div>
+                                <div class="project-text">
+                                   J'ai la chance de pouvoir avoir un jour Off par semaine. Travail sur 4 jours au lieu de 5. Donc un jour complet complètement dévoué. Rien de plus à dire en vrai ça me parfait plutôt bien expliqué, sinon c'est ton problème...
+                                </div>
+                            </div>
+
+                            <div class="project-card">
+                                <div class="project-title">💻️ Bip bip boup mais de loin</div>
+                                <div class="project-meta">De très loin oui oui</div>
+                                <div class="project-text">
+                                    En tant que jeune cadre dynamique dans une start-up en pleine croissance j'ai le droit à une chose exeptionelle qui s'appelle le Télé Travail.
+                                    <br>C'est quoi ? Regarder la télé en guise de travail ! Ah nan mince, c'est le truc où t'es en vert sur Teams mais en vrai tu prends un café dans ton salon.
+                                    <br>Et ça 1/2/3 jours par semaine ! Ouais mon entreprise est plutôt chill là dessus... (J'ai déjà fait 2 semaines consécutive en TT - grand fou - ouais je sais - POOOL tu parles à qui ? - Personne, j'arrive Maman !!!)
+                                </div>
+                            </div>
+
+                            <div class="project-card">
+                                <div class="project-title">⏰ Métro, boulot, tchao</div>
+                                <div class="project-meta">Oh non je dois faire 8h - 18h...</div>
+                                <div class="project-text">
+                                    Oui mon entreprise est vraiment dans la "New Gen" (Eh yo je suis cool un peu la team 😎🤙 ?).
+                                    <br>Donc pas d'horaires imposés c'est travail libre !
+                                    <br>Arrivé à 4h et partir à 12h ? Ok !
+                                    <br>Arrivé à 12h et partir à 20h ? Ok !
+                                    <br>Arrivé à 4h et partir à 20h ? Nan frr je dors c quoi ce raffut
+                                </div>
+                            </div>
+
+                            <div class="project-card">
+                                <div class="project-title">😱 Ça fait peur</div>
+                                <div class="project-meta">Je suis vraiment terrifié là</div>
+                                <div class="project-text">
+                                    Bon c'est pas vraiment un argument en vrai ça.
+                                    <br>J'en reviens pas que je vais sortit le fameux "gneugneugneu ça à déjà été fait"...
+                                    <br>Bon bah je le fais quand même : S/O Julia en TN10 en A24 pour l'exemple.
+                                    <br><br>(Et rien à voir mais gros big up à tous mes gars les alternants. On est ensemble lâcher pas les pétitions pour le badgeage :émoji-poing-levé-de-militantisme:)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <aside class="toolbox-side reveal" data-parallax="0.04">
+                        <h3>👴 Eh frr t'as 45 ans c'est quoi ton histoire ?</h3>
+                        <p>
+                            Alors actually (🤓) déjà j'ai 23 ans et je suis même pas le plus vieux (Aymen il est plus vieux que moi)
+                            <br>Mais il est vrai que faut lâcher un moment, je paye bientôt mes impôts.
+                            <br><br>Bon tu veux faire quoi du coup gros con ?
+                        </p>
+
+                        <div class="toolbox-check">
+                            <div class="row"><div><strong>1. RSE</strong><span>J'ai envie de faire quelque chose de mes dix doigts comme on dit </span></div></div>
+                            <div class="row"><div><strong>2. Com</strong><span>Vous avez vu l'edit poufs la team ?</span></div></div>
+                            <div class="row"><div><strong>3. Eh ça va aussi</strong><span>On va pas abuser non plus</span></div></div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </section>
+
+
+        <footer class="footer">
+            <div class="max-w footer-inner">
+                The Amazing Picasso — ToolBox ·
+                <span><a href="../index.html#top">Retour à l’accueil</a></span>
+            </div>
+        </footer>
+
+    </main>
+</div>
+
+<!-- JS commun -->
+<script src="../script.js"></script>
+
+<!-- JS ToolBox : tilt + démo wiki (simple, autonome) -->
+<script>
+    (function () {
+        // Scroll vers la démo
+        const btn = document.getElementById('scrollToDemo');
+        if (btn) {
+            btn.addEventListener('click', () => {
+                const el = document.getElementById('wikipicDemo');
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        }
+
+        // Tilt cards (screenshot)
+        const tiltCard = document.querySelector('[data-tilt]');
+        const toggleTilt = document.getElementById('toggleTilt');
+        if (!tiltCard) return;
+
+        let enabled = true;
+        const maxRotate = 12;
+        const zDepth = 10;
+
+        const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+        const apply = (rx, ry) => {
+            tiltCard.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) translateZ(${zDepth}px)`;
+        };
+
+        const reset = () => {
+            tiltCard.style.transform = 'rotateX(0deg) rotateY(0deg) translateZ(0)';
+            const overlay = tiltCard.querySelector('.tilt-overlay');
+            if (overlay) overlay.style.opacity = 0.55;
+        };
+
+        const onMove = (e) => {
+            if (!enabled) return;
+            const rect = tiltCard.getBoundingClientRect();
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+
+            const dx = (e.clientX - cx) / Math.max(260, rect.width);
+            const dy = (e.clientY - cy) / Math.max(260, rect.height);
+
+            const px = clamp(dx, -1, 1);
+            const py = clamp(dy, -1, 1);
+
+            const ry = px * maxRotate;
+            const rx = -py * maxRotate;
+
+            apply(rx, ry);
+
+            const overlay = tiltCard.querySelector('.tilt-overlay');
+            if (overlay) {
+                overlay.style.opacity = 0.42;
+                overlay.style.setProperty('--mx', `${((e.clientX - rect.left) / rect.width) * 100}%`);
+                overlay.style.setProperty('--my', `${((e.clientY - rect.top) / rect.height) * 100}%`);
+            }
+        };
+
+        const isVisible = () => {
+            const r = tiltCard.getBoundingClientRect();
+            return r.bottom > 0 && r.top < (window.innerHeight || document.documentElement.clientHeight);
+        };
+
+        window.addEventListener('mousemove', (e) => {
+            if (!enabled) return;
+            if (!isVisible()) return;
+            onMove(e);
+        }, { passive: true });
+
+        tiltCard.addEventListener('mouseleave', reset);
+
+        if (toggleTilt) {
+            toggleTilt.addEventListener('click', () => {
+                enabled = !enabled;
+                toggleTilt.textContent = enabled ? 'Tilt ON/OFF' : 'Tilt OFF (clique pour ON)';
+                if (!enabled) reset();
+            });
+        }
+
+        // --- WikiPic mini-nav (catégories + Locaux sous-catégories) ---
+        const wikiRoot = document.querySelector('.wikipic-embed');
+        if (wikiRoot) {
+            const topbarPath = wikiRoot.querySelector('.wikipic-topbar-path');
+            const article = wikiRoot.querySelector('.wikipic-article');
+            const locauxToggle = wikiRoot.querySelector('[data-wiki-toggle="locaux"]');
+            const locauxSubnav = wikiRoot.querySelector('[data-wiki-subnav="locaux"]');
+            const locauxChevron = wikiRoot.querySelector('[data-wiki-chevron="locaux"]');
+
+            const pages = {
+                accueil: {
+                    path: 'Accueil',
+                    h1: 'PIC 101',
+                    h2: 'Accueil',
+                    p: [
+                        'Le Pic 101 est la base de connaissances du foyer Picasso : un outil pensé pour transmettre, structurer et préserver l’ensemble du savoir accumulé depuis des années. Procédures, techniques, retours d’expérience, astuces de terrain… tout est rassemblé pour garantir la continuité, l’efficacité et la pérénité des équipes présentes et futures.',
+                        'Il doit être envisagé comme un wiki collaboratif : un outil vivant, mis à jour au fil des semestres, rassemblant les retours d’expérience, les ajustements et les bonnes pratiques. Il sert de base solide pour les passations futures, garantissant que chaque équipe puisse s’appuyer sur un socle clair, structuré et fiable. Chacun a donc la responsabilité d’enrichir et de maintenir cet espace, afin que le savoir du foyer gagne en précision et en pertinence année après année.',
+                        'Parce que documenter l’ensemble des pratiques, équipements et procédures est un travail long, progressif et exigeant, le Pic 101 restera naturellement en constante évolution. Certaines sections seront complétées progressivement, d’autres évolueront avec le fonctionnement du foyer ou les innovations introduites par les nouvelles équipes. Cette flexibilité fait partie intégrante du projet : un outil qui grandit avec le Pic, sans jamais être totalement figé.'
+                    ]
+                },
+
+                animations: {
+                    path: 'Animations',
+                    h1: 'Animations',
+                    h2: 'Idées & continuité',
+                    p: [
+                        '<strong>Objectif :</strong> booster l’animation sans surcharger la team, avec des formats récurrents et faciles à relancer.',
+                        'Relancer des formats interactifs (sondages, votes “quelle bière on garde ?”), et redonner vie aux télés.',
+                        'Travailler des concepts “low effort / high fun” : thèmes, playlists, mini-challenges, et idées réutilisables semestre après semestre.'
+                    ]
+                },
+
+                'appro-soft': {
+                    path: 'Appro / Soft',
+                    h1: 'Appro',
+                    h2: 'Soft',
+                    p: [
+                        'Toujours + d’outils pour suivre l’inventaire (Appro × Tréso) côté soft.',
+                        'Tableau simple : stocks, dates, alertes, et rotation.',
+                        'À terme : automatiser un minimum (exports / dashboard).'
+                    ]
+                },
+
+                'appro-biere': {
+                    path: 'Appro / Bière',
+                    h1: 'Appro',
+                    h2: 'Bière',
+                    p: [
+                        'Même logique que soft : suivi propre, alertes, et outil partagé.',
+                        'Objectif : moins d’erreurs, plus de visibilité (et meilleure décision sur les rotations / nouveautés).'
+                    ]
+                },
+
+                communication: {
+                    path: 'Communication',
+                    h1: 'Communication',
+                    h2: 'Écrans & formats',
+                    p: [
+                        'Relancer les visus interactifs sur les télés : sondages en live, messages utiles, prévention.',
+                        'Tester des formats “data fun” : une conso déclenche un visuel, stats du soir, etc.'
+                    ]
+                },
+
+                general: {
+                    path: 'Général',
+                    h1: 'Général',
+                    h2: 'Cadre & documents',
+                    p: [
+                        'Mettre le règlement du Pic (et/ou autres documents : charte RGPD, charte conso alcool, etc.) à signer à l’inscription.',
+                        'Objectif : cadrer proprement et réduire les conflits / incompréhensions.'
+                    ]
+                },
+
+                informatique: {
+                    path: 'Informatique',
+                    h1: 'Informatique',
+                    h2: 'Outils & BI',
+                    p: [
+                        'Toujours + d’outils pour suivre l’inventaire (Appro × Tréso).',
+                        'Rapport BI pour suivre un peu tout (ventes, pertes, tops, tendances).',
+                        'L’application (évidemment).',
+                        'Et la vraie question : on passe sur GitLab ou quoi la team ?'
+                    ]
+                },
+
+                presidence: {
+                    path: 'Présidence',
+                    h1: 'Présidence',
+                    h2: 'Transmission & continuité',
+                    p: [
+                        'Centraliser le savoir critique : procédures, checklists, contacts, plans B.',
+                        'Objectif : éviter que les infos se perdent et rendre la passation “plug & play”.'
+                    ]
+                },
+
+                tresorerie: {
+                    path: 'Trésorerie',
+                    h1: 'Trésorerie',
+                    h2: 'Organisation & audit',
+                    p: [
+                        'Mettre à jour fiche d’emprunt (prix etc.).',
+                        'Système clean pour ranger archives / classeurs / factures.',
+                        'Audit poussé : achats/ventes par catégories et par articles (utilité d’un outil type Power BI).',
+                        'Formation début de semestre pour éviter le max de soucis.'
+                    ]
+                },
+
+                // --- Locaux (overview main page) ---
+                locaux: {
+                    path: 'Locaux',
+                    h1: 'Locaux',
+                    h2: 'Vue d’ensemble',
+                    p: [
+                        'La catégorie <strong>Locaux</strong> centralise toutes les informations liées aux espaces physiques du Pic : organisation, matériel, entretien et bonnes pratiques.',
+                        'Chaque sous-catégorie correspond à un espace clé du foyer. L’objectif est de documenter précisément <strong>où est quoi</strong>, <strong>comment on entretient</strong>, et <strong>quels sont les points d’attention</strong>.',
+                        'Sélectionne un espace ci-dessous pour accéder aux fiches associées.'
+                    ],
+                    extraHtml: `
+            <div class="wikipic-cards" role="list">
+              <button class="wikipic-card" type="button" data-wiki-page="locaux-bar" role="listitem">
+                <div class="wikipic-card-title">🍺 Bar</div>
+                <div class="wikipic-card-meta">Machines · tirage · hygiène</div>
+              </button>
+              <button class="wikipic-card" type="button" data-wiki-page="locaux-salle" role="listitem">
+                <div class="wikipic-card-title">🛋️ Salle</div>
+                <div class="wikipic-card-meta">Mobilier · déco · usages</div>
+              </button>
+              <button class="wikipic-card" type="button" data-wiki-page="locaux-reserve" role="listitem">
+                <div class="wikipic-card-title">📦 Réserve</div>
+                <div class="wikipic-card-meta">Stockage · inventaire · rotation</div>
+              </button>
+              <button class="wikipic-card" type="button" data-wiki-page="locaux-exterieur" role="listitem">
+                <div class="wikipic-card-title">🌿 Extérieur</div>
+                <div class="wikipic-card-meta">Matériel · logistique · saisons</div>
+              </button>
+            </div>
+          `
+                },
+                'locaux-bar': {
+                    path: 'Locaux / Bar',
+                    h1: 'Locaux',
+                    h2: 'Bar',
+                    p: [
+                        'Cette section documente tout ce qui concerne le <strong>bar</strong> : rangement, hygiène, petites réparations, consommables, matériel, et bonnes pratiques pour que le foyer reste propre et fonctionnel.',
+                        'Exemples de sujets à documenter : poubelles (tri + organique), nettoyage régulier et gros ménage d’intersemestre, gestion des écocups/alternatives, checklist d’ouverture/fermeture et points de contrôle.',
+                        'Ci-dessous : des <strong>fiches</strong> “matos bar” (on pourra en ajouter plus tard).'
+                    ],
+                    extraHtml: `
+            <div class="wikipic-h2" style="margin-top: 24px; font-size: 28px;">Fiches</div>
+            <div class="wikipic-cards" role="list">
+              <button class="wikipic-card" type="button" data-wiki-page="locaux-bar-cafe" role="listitem">
+                <div class="wikipic-card-title">Machine à café</div>
+                <div class="wikipic-card-meta">Équipement • procédures • entretien • erreurs</div>
+              </button>
+              <button class="wikipic-card" type="button" data-wiki-page="locaux-bar-laveverre" role="listitem">
+                <div class="wikipic-card-title">Lave-verre</div>
+                <div class="wikipic-card-meta">Nettoyage • rinçage • maintenance</div>
+              </button>
+              <button class="wikipic-card" type="button" data-wiki-page="locaux-bar-tirage" role="listitem">
+                <div class="wikipic-card-title">Système de tirage</div>
+                <div class="wikipic-card-meta">Pression • nettoyage • pannes</div>
+              </button>
+            </div>
+          `
+                },
+
+                'locaux-bar-cafe': {
+                    path: 'Locaux / Bar / Machine à café',
+                    h1: 'Machine à café',
+                    h2: 'Infos générales',
+                    p: [
+                        '<strong>Type :</strong> Équipement',
+                        'La machine à café permet la préparation de cafés (environ <strong>60 par jour</strong>) et fournit également de l’eau chaude pour divers usages. Elle fait partie des équipements critiques du bar.'
+                    ],
+                    extraHtml: `
+            <div class="wikipic-badges">
+              <span class="wikipic-badge">Type : Équipement</span>
+              <span class="wikipic-badge ok">Vérifié</span>
+            </div>
+
+            <div class="wikipic-kv">📍 <strong>Emplacement :</strong> Derrière le bar, à gauche des têtes de tirage<br/>⚡ <strong>Puissance électrique :</strong> 2000W <em>(PAS VRAI – à check)</em></div>
+
+            <div class="wikipic-h2" style="font-size: 28px;">Procédures utiles</div>
+
+            <div class="wikipic-p"><strong>Utilisations</strong></div>
+            <div class="wikipic-p" style="margin-top:-10px;">Fonctionnement automatique</div>
+            <ul class="wikipic-p" style="margin-top:-8px;">
+              <li>Allumage automatique : <strong>7h</strong></li>
+              <li>Extinction automatique : <strong>23h</strong></li>
+              <li>Jours : <strong>lundi → samedi</strong></li>
+            </ul>
+
+            <div class="wikipic-p"><strong>Marche / arrêt manuel</strong></div>
+            <div class="wikipic-p" style="margin-top:-10px;">En cas de nécessité, le bouton marche/arrêt se situe à l’avant droit de la machine.</div>
+
+            <div class="wikipic-p"><strong>Boutons sur la machine</strong></div>
+            <div class="wikipic-figure">
+              <img src="../../assets/FicheCafé.jpeg" alt="Machine à café — visuel" onerror="this.onerror=null;this.src='../../assets/ExempleFiche.png';" />
+            </div>
+
+            <div class="wikipic-p" style="margin-top: 6px;"><strong>Explications des boutons dans l’ordre :</strong></div>
+            <ol class="wikipic-p" style="margin-top:-8px; margin-left: 30px">
+              <li>Café court</li>
+              <li>Café long</li>
+              <li>Double café court</li>
+              <li>Double café long</li>
+              <li>Écoulement continu</li>
+            </ol>
+
+            <div class="wikipic-h2" style="font-size: 28px;">Entretien</div>
+
+            <div class="wikipic-p"><strong>⏱️ Quotidien :</strong></div>
+            <ul class="wikipic-p" style="margin-top:-8px;">
+              <li>Nettoyage de la grille</li>
+              <li>Nettoyage de la plaque (éponge / chiffon)</li>
+            </ul>
+
+            <div class="wikipic-p"><strong>📅 Hebdomadaire :</strong></div>
+            <ul class="wikipic-p" style="margin-top:-8px;">
+              <li>Lavage de l’intérieur de la machine en suivant la procédure dans la notice… <em>(TODO : compléter avec notice)</em></li>
+              <li>Nettoyage de la buse vapeur</li>
+            </ul>
+
+            <div class="wikipic-p"><strong>🗓 Mensuel / Annuel :</strong></div>
+            <ul class="wikipic-p" style="margin-top:-8px;">
+              <li>La machine utilise une <strong>bouteille de filtration</strong> pour éviter la sur-accumulation de calcaire : à changer annuellement (<strong>septembre / octobre</strong>).</li>
+              <li>⚠️ Une bouteille non remplacée augmente fortement le risque d’entartrage.</li>
+            </ul>
+
+            <div class="wikipic-h2" style="font-size: 28px;">Erreurs fréquentes</div>
+            <div class="wikipic-p"><strong>⚠️ ERR – Remplissage chaudière</strong></div>
+            <div class="wikipic-p" style="margin-top:-10px;"><strong>Cause probable :</strong> la pompe étant ancienne, elle peut avoir des difficultés à réamorcer la chaudière après une vidange complète.</div>
+
+            <div class="wikipic-p" style="margin-top:-10px;"><strong>Solution autorisée :</strong></div>
+            <ul class="wikipic-p" style="margin-top:-8px;">
+              <li>Éteindre puis rallumer la machine</li>
+              <li>Répéter l’opération jusqu’à disparition de l’erreur</li>
+            </ul>
+
+            <div class="wikipic-p" style="margin-top:-10px;"><strong>⚠️ Limite :</strong> si l’erreur persiste après plusieurs tentatives → arrêter la machine et contacter un responsable.</div>
+
+            <div class="wikipic-h2" style="font-size: 28px;">Entreprise en charge</div>
+            <table class="wikipic-table" aria-label="Entreprise en charge">
+              <thead>
+                <tr><th>Champ</th><th>Valeur</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Entreprise</td><td>xxxxx</td></tr>
+                <tr><td>Numéro</td><td>XX.XX.XX.XX.XX</td></tr>
+                <tr><td>Date de début de contrat</td><td>A24</td></tr>
+              </tbody>
+            </table>
+
+            <div class="wikipic-h2" style="font-size: 28px;">Matériel / Ressources associées</div>
+            <ul class="wikipic-p" style="margin-top:-8px;">
+              <li><strong>Outils :</strong> cache caoutchouc</li>
+              <li><strong>Produits :</strong> pastilles d’entretien</li>
+              <li><strong>Consommables :</strong> bouteille de filtration</li>
+            </ul>
+
+            <div class="wikipic-h2" style="font-size: 28px;">Retours d’expérience</div>
+            <ul class="wikipic-p" style="margin-top:-8px;">
+              <li>En A24, plusieurs pannes étaient liées à la chaudière.</li>
+            </ul>
+
+            <div class="wikipic-h2" style="font-size: 28px;">Contacts utiles</div>
+            <table class="wikipic-table" aria-label="Contacts utiles">
+              <thead>
+                <tr><th>Nom / Entité</th><th>Rôle</th><th>Contact</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Ali</td><td>Appro Soft (Café) A25</td><td>Ali Haj Amou (06.06.06.06.06) · ali@gmail.com</td></tr>
+                <tr><td>Robin</td><td>Team Locaux A25</td><td>Robin Kadel (07.00.00.00.00) · robin@perso.com</td></tr>
+                <tr><td>Pol</td><td>Keske je fait là ?</td><td>Pol Discart (07.67.23.23.23) · polman@gmail.com</td></tr>
+              </tbody>
+            </table>
+
+            <div class="wikipic-h2" style="font-size: 28px;">Checklist express</div>
+            <div class="wikipic-kv" role="group" aria-label="Checklist express">
+              ☐ Machine allumée<br/>
+              ☐ Eau OK<br/>
+              ☐ Pression normale<br/>
+              ☐ Pas de fuite<br/>
+              ☐ Café OK
+            </div>
+
+            <div class="wikipic-h2" style="font-size: 28px;">Historique</div>
+            <table class="wikipic-table" aria-label="Historique">
+              <thead>
+                <tr><th>Date</th><th>Version</th><th>Modification</th><th>Responsable</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>16/12/2025</td><td>V1.0</td><td>Création fiche</td><td>Pol DISCART</td></tr>
+              </tbody>
+            </table>
+
+            <div style="margin-top: 14px;">
+              <button class="wikipic-card" type="button" data-wiki-page="locaux-bar" style="width:100%;">
+                <div class="wikipic-card-title">← Retour aux fiches Bar</div>
+                <div class="wikipic-card-meta">Locaux / Bar</div>
+              </button>
+            </div>
+          `
+                },
+
+                'locaux-bar-laveverre': {
+                    path: 'Locaux / Bar / Lave-verre',
+                    h1: 'Lave-verre',
+                    h2: 'À compléter',
+                    p: [
+                        'Fiche en cours : on documentera ici le modèle, l’utilisation, les produits, et les checklists (quotidien/hebdo).'
+                    ],
+                    extraHtml: `
+            <div style="margin-top: 14px;">
+              <button class="wikipic-card" type="button" data-wiki-page="locaux-bar" style="width:100%;">
+                <div class="wikipic-card-title">← Retour aux fiches Bar</div>
+                <div class="wikipic-card-meta">Locaux / Bar</div>
+              </button>
+            </div>
+          `
+                },
+
+                'locaux-bar-tirage': {
+                    path: 'Locaux / Bar / Système de tirage',
+                    h1: 'Système de tirage',
+                    h2: 'À compléter',
+                    p: [
+                        'Fiche en cours : on documentera ici pression, nettoyage des lignes, gestes de tirage, et résolution des pannes fréquentes.'
+                    ],
+                    extraHtml: `
+            <div style="margin-top: 14px;">
+              <button class="wikipic-card" type="button" data-wiki-page="locaux-bar" style="width:100%;">
+                <div class="wikipic-card-title">← Retour aux fiches Bar</div>
+                <div class="wikipic-card-meta">Locaux / Bar</div>
+              </button>
+            </div>
+          `
+                },
+
+                'locaux-salle': {
+                    path: 'Locaux / Salle',
+                    h1: 'Locaux',
+                    h2: 'Salle',
+                    p: [
+                        'La <strong>salle</strong> est l’espace de vie : mobilier, déco, jeux, affichage, circulation, et confort.',
+                        'Objectif : standards simples (check-list fin de perm, rangement, entretien).'
+                    ]
+                },
+
+                'locaux-reserve': {
+                    path: 'Locaux / Réserve',
+                    h1: 'Locaux',
+                    h2: 'Réserve',
+                    p: [
+                        'La <strong>réserve</strong> = efficacité : stockage, inventaire, étiquetage, rotation et accès rapide.',
+                        'Objectif : retrouver un truc en 10 secondes + comprendre quoi faire ensuite.'
+                    ]
+                },
+
+                'locaux-exterieur': {
+                    path: 'Locaux / Extérieur',
+                    h1: 'Locaux',
+                    h2: 'Extérieur',
+                    p: [
+                        'L’<strong>extérieur</strong> : matériel dehors, protection pluie, déco, zones de jeu, et logistique printemps/été.',
+                        'Objectif : rendre l’extérieur “plug & play”.'
+                    ]
+                }
+            };
+
+            const setActive = (key) => {
+                wikiRoot.querySelectorAll('.wikipic-item').forEach((el) => {
+                    el.classList.remove('is-active');
+                    el.removeAttribute('aria-current');
+                });
+                wikiRoot.querySelectorAll('.wikipic-subitem').forEach((el) => el.classList.remove('is-active'));
+
+                if (key && key.startsWith('locaux-')) {
+                    const subActive = wikiRoot.querySelector(`.wikipic-subitem[data-wiki-page="${key}"]`);
+                    if (subActive) subActive.classList.add('is-active');
+
+                    if (locauxToggle) locauxToggle.classList.add('is-active');
+                    return;
+                }
+
+                const mainActive = wikiRoot.querySelector(`.wikipic-item[data-wiki-page="${key}"]`);
+                if (mainActive) {
+                    mainActive.classList.add('is-active');
+                    mainActive.setAttribute('aria-current', 'page');
+                }
+            };
+
+            const render = (key) => {
+                const page = pages[key];
+                if (!page || !article) return;
+
+                if (topbarPath) topbarPath.textContent = page.path;
+
+                article.innerHTML = `
+          <h1 class="wikipic-h1">${page.h1}</h1>
+          <h2 class="wikipic-h2">${page.h2}</h2>
+          ${Array.isArray(page.p) ? page.p.map(txt => `<p class="wikipic-p">${txt}</p>`).join('') : ''}
+          ${page.extraHtml ? page.extraHtml : ''}
+        `.trim();
+
+                setActive(key);
+            };
+
+            // Toggle Locaux subnav ONLY when clicking the chevron (not the whole row)
+            if (locauxToggle && locauxSubnav && locauxChevron) {
+                locauxChevron.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const isOpen = locauxSubnav.classList.contains('is-open');
+                    locauxSubnav.classList.toggle('is-open', !isOpen);
+                    locauxToggle.setAttribute('aria-expanded', (!isOpen).toString());
+                });
+            }
+
+            // Click handlers for both main items and subitems/cards
+            wikiRoot.addEventListener('click', (e) => {
+                const btn = e.target.closest('[data-wiki-page]');
+                if (!btn) return;
+
+                const key = btn.getAttribute('data-wiki-page');
+                if (!key) return;
+
+                e.preventDefault?.();
+
+                if (key.startsWith('locaux-') && locauxSubnav && !locauxSubnav.classList.contains('is-open')) {
+                    locauxSubnav.classList.add('is-open');
+                    if (locauxToggle) locauxToggle.setAttribute('aria-expanded', 'true');
+                }
+
+                render(key);
+            });
+
+            // Default: Accueil
+            render('accueil');
+        }
+
+    })();
+</script>
+</body>
+</html>

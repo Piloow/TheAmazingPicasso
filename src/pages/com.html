@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>The Amazing Picasso – Com</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../style.css" />
+    <style>
+      .work-hero-video{
+        width: 100%;
+        height: 100%;
+        display: block;
+        border-radius: 18px; /* keep consistent with hero rounding */
+        object-fit: cover;
+      }
+
+      /* Custom video start overlay (sound-friendly) */
+      .work-video-wrap{
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+
+      .work-video-overlay{
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        background: radial-gradient(circle at 50% 50%, rgba(17,24,39,0.18), rgba(17,24,39,0.55));
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.18s ease;
+        border-radius: 18px;
+      }
+
+      .work-video-wrap.is-idle .work-video-overlay{
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .work-video-playbtn{
+        appearance: none;
+        border: 1px solid rgba(255,255,255,0.28);
+        background: rgba(255,255,255,0.14);
+        color: rgba(255,255,255,0.95);
+        font-weight: 900;
+        font-size: 1.05rem;
+        padding: 0.85rem 1.05rem;
+        border-radius: 999px;
+        cursor: pointer;
+        box-shadow: 0 18px 55px rgba(17,24,39,0.35);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+      }
+
+      .work-video-playbtn:hover{ transform: translateY(-1px); }
+
+      .work-video-hint{
+        color: rgba(255,255,255,0.85);
+        font-weight: 700;
+        font-size: 0.95rem;
+        opacity: 0.9;
+        text-align: center;
+        max-width: 22ch;
+      }
+
+      /* Cards grid: force 2 cards per row (responsive) */
+      .cards-grid.cards-grid-2col{
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      @media (max-width: 720px){
+        .cards-grid.cards-grid-2col{
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* --- Galerie murale (rythme visuel) --- */
+      .cards-grid.gallery-wall{
+        position: relative;
+        padding: 1.1rem;
+        border-radius: 26px;
+        border: 1px solid rgba(17,24,39,0.10);
+        background:
+          radial-gradient(circle at 12% 18%, rgba(249,115,22,0.10), transparent 38%),
+          radial-gradient(circle at 88% 22%, rgba(99,102,241,0.10), transparent 42%),
+          radial-gradient(circle at 30% 90%, rgba(236,72,153,0.08), transparent 45%),
+          linear-gradient(180deg, rgba(255,255,255,0.78), rgba(255,255,255,0.62));
+        box-shadow: 0 18px 50px rgba(17,24,39,0.08);
+        overflow: hidden;
+        justify-content: center;
+        justify-items: center;
+      }
+
+      /* petits pois “mur” */
+      .cards-grid.gallery-wall::before{
+        content:"";
+        position:absolute;
+        inset:-2px;
+        opacity: 0.55;
+        pointer-events:none;
+        background-image:
+          radial-gradient(rgba(17,24,39,0.08) 1px, transparent 1px);
+        background-size: 18px 18px;
+        mask-image: radial-gradient(circle at 50% 30%, rgba(0,0,0,1), rgba(0,0,0,0.25) 60%, rgba(0,0,0,0) 85%);
+      }
+
+      /* grille plus vivante: hauteurs variables */
+      .cards-grid.gallery-wall{
+        grid-auto-rows: 1fr;
+        gap: 1.05rem;
+      }
+
+      /* Style “polaroid / poster” */
+      .cards-grid.gallery-wall .nav-card{
+        position: relative;
+        background: rgba(255,255,255,0.88);
+        border: 1px solid rgba(17,24,39,0.12);
+        box-shadow: 0 18px 55px rgba(17,24,39,0.10);
+        overflow: hidden;
+        backdrop-filter: blur(6px);
+        width: 100%;
+        max-width: 560px;
+      }
+
+      /* effet scotch */
+      .cards-grid.gallery-wall .nav-card::before{
+        content:"";
+        position:absolute;
+        top: -12px;
+        left: 16px;
+        width: 86px;
+        height: 26px;
+        background: rgba(250,250,250,0.65);
+        border: 1px solid rgba(17,24,39,0.10);
+        border-radius: 10px;
+        transform: rotate(-6deg);
+        box-shadow: 0 10px 24px rgba(17,24,39,0.08);
+        opacity: 0.9;
+        pointer-events:none;
+      }
+
+      .cards-grid.gallery-wall .nav-card::after{
+        content:"";
+        position:absolute;
+        bottom: -10px;
+        right: 18px;
+        width: 72px;
+        height: 22px;
+        background: rgba(250,250,250,0.55);
+        border: 1px solid rgba(17,24,39,0.10);
+        border-radius: 10px;
+        transform: rotate(8deg);
+        opacity: 0.55;
+        pointer-events:none;
+      }
+
+      /* Rythme: tailles/hauteurs alternées */
+      .cards-grid.gallery-wall .nav-card:nth-child(1){ min-height: 250px; }
+      .cards-grid.gallery-wall .nav-card:nth-child(2){ min-height: 290px; }
+      .cards-grid.gallery-wall .nav-card:nth-child(3){ min-height: 300px; }
+      .cards-grid.gallery-wall .nav-card:nth-child(4){ min-height: 260px; }
+
+      /* Sur mobile: mur plus compact */
+      @media (max-width: 720px){
+        .cards-grid.gallery-wall{ padding: 0.85rem; }
+        .cards-grid.gallery-wall .nav-card::after{ display:none; }
+        .cards-grid.gallery-wall .nav-card{ max-width: 100%; }
+      }
+
+      /* === COM BACKGROUND: crayons (crayon à papier + gomme) + parallax === */
+      body{
+        background:
+          linear-gradient(180deg, rgba(255,255,255,0.94), rgba(248,250,252,0.75));
+        background-attachment: fixed;
+      }
+
+      /* deux calques de crayons (SVG inline) */
+      body::before,
+      body::after{
+        content:"";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.22;
+        transform: translate3d(0, var(--pencil-parallax, 0px), 0);
+        will-change: transform;
+      }
+
+      /* Calque 1 : crayons plus visibles */
+      body::before{
+        opacity: 0.22;
+        background-repeat: no-repeat;
+        background-size:
+          220px 220px,
+          200px 200px,
+          240px 240px,
+          190px 190px,
+          260px 260px,
+          210px 210px;
+        background-position:
+          6% 14%,
+          86% 18%,
+          18% 78%,
+          78% 72%,
+          52% 42%,
+          10% 48%;
+        background-image:
+          url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 220'><g transform='rotate(-18 110 110)'><rect x='28' y='98' width='132' height='22' rx='11' fill='%23f3d36b' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><rect x='160' y='98' width='20' height='22' rx='7' fill='%23f4a3b6' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><rect x='178' y='100' width='8' height='18' rx='4' fill='%23d1d5db' opacity='.7'/><polygon points='28,98 10,109 28,120' fill='%23cbd5e1' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><polygon points='10,109 2,109 10,109 10,109 2,109' fill='none'/><polygon points='10,109 2,109 10,109' fill='none'/><polygon points='10,109 2,109 10,109' fill='none'/><polygon points='10,109 2,109 10,109' fill='none'/><polygon points='10,109 2,109 10,109' fill='none'/><polygon points='10,109 2,109 10,109' fill='none'/><polygon points='10,109 2,109 10,109' fill='none'/><polygon points='10,109 2,109 10,109' fill='none'/><polygon points='10,109 2,109 10,109' fill='none'/><polygon points='10,109 2,109 10,109' fill='none'/><polygon points='10,109 2,109 10,109' fill='none'/><polygon points='10,109 2,109 10,109' fill='none'/><polygon points='10,109 2,109 10,109' fill='none'/><polygon points='10,109 2,109 10,109' fill='none'/><polygon points='10,109 2,109 10,109' fill='none'/><polygon points='10,109 2,109 10,109' fill='none'/><polygon points='10,109 2,109 10,109' fill='none'/><polygon points='10,109 2,109 10,109' fill='none'/><polygon points='10,109 2,109 10,109' fill='none'/><polygon points='10,109 2,109 10,109' fill='none'/><circle cx='6' cy='109' r='4' fill='%23111827' opacity='.35'/></g></svg>"),
+          url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 220'><g transform='rotate(14 110 110)'><rect x='28' y='98' width='132' height='22' rx='11' fill='%23f3d36b' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><rect x='160' y='98' width='20' height='22' rx='7' fill='%23f4a3b6' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><rect x='178' y='100' width='8' height='18' rx='4' fill='%23d1d5db' opacity='.7'/><polygon points='28,98 10,109 28,120' fill='%23cbd5e1' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><circle cx='6' cy='109' r='4' fill='%23111827' opacity='.35'/></g></svg>"),
+          url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 220'><g transform='rotate(-32 110 110)'><rect x='28' y='98' width='132' height='22' rx='11' fill='%23f3d36b' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><rect x='160' y='98' width='20' height='22' rx='7' fill='%23f4a3b6' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><rect x='178' y='100' width='8' height='18' rx='4' fill='%23d1d5db' opacity='.7'/><polygon points='28,98 10,109 28,120' fill='%23cbd5e1' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><circle cx='6' cy='109' r='4' fill='%23111827' opacity='.35'/></g></svg>"),
+          url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 220'><g transform='rotate(28 110 110)'><rect x='28' y='98' width='132' height='22' rx='11' fill='%23f3d36b' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><rect x='160' y='98' width='20' height='22' rx='7' fill='%23f4a3b6' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><rect x='178' y='100' width='8' height='18' rx='4' fill='%23d1d5db' opacity='.7'/><polygon points='28,98 10,109 28,120' fill='%23cbd5e1' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><circle cx='6' cy='109' r='4' fill='%23111827' opacity='.35'/></g></svg>"),
+          url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 220'><g transform='rotate(-6 110 110)'><rect x='28' y='98' width='132' height='22' rx='11' fill='%23f3d36b' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><rect x='160' y='98' width='20' height='22' rx='7' fill='%23f4a3b6' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><rect x='178' y='100' width='8' height='18' rx='4' fill='%23d1d5db' opacity='.7'/><polygon points='28,98 10,109 28,120' fill='%23cbd5e1' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><circle cx='6' cy='109' r='4' fill='%23111827' opacity='.35'/></g></svg>"),
+          url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 220'><g transform='rotate(36 110 110)'><rect x='28' y='98' width='132' height='22' rx='11' fill='%23f3d36b' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><rect x='160' y='98' width='20' height='22' rx='7' fill='%23f4a3b6' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><rect x='178' y='100' width='8' height='18' rx='4' fill='%23d1d5db' opacity='.7'/><polygon points='28,98 10,109 28,120' fill='%23cbd5e1' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><circle cx='6' cy='109' r='4' fill='%23111827' opacity='.35'/></g></svg>");
+      }
+
+      /* Calque 2 : plus léger + décalé (profondeur) */
+      body::after{
+        opacity: 0.12;
+        transform: translate3d(0, var(--pencil-parallax-2, 0px), 0);
+        background-repeat: no-repeat;
+        background-size:
+          260px 260px,
+          210px 210px,
+          240px 240px,
+          200px 200px;
+        background-position:
+          20% 30%,
+          92% 46%,
+          58% 88%,
+          8% 92%;
+        filter: blur(0.2px);
+        background-image:
+          url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 220'><g transform='rotate(8 110 110)'><rect x='28' y='98' width='132' height='22' rx='11' fill='%23f3d36b' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><rect x='160' y='98' width='20' height='22' rx='7' fill='%23f4a3b6' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><rect x='178' y='100' width='8' height='18' rx='4' fill='%23d1d5db' opacity='.7'/><polygon points='28,98 10,109 28,120' fill='%23cbd5e1' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><circle cx='6' cy='109' r='4' fill='%23111827' opacity='.35'/></g></svg>"),
+          url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 220'><g transform='rotate(-22 110 110)'><rect x='28' y='98' width='132' height='22' rx='11' fill='%23f3d36b' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><rect x='160' y='98' width='20' height='22' rx='7' fill='%23f4a3b6' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><rect x='178' y='100' width='8' height='18' rx='4' fill='%23d1d5db' opacity='.7'/><polygon points='28,98 10,109 28,120' fill='%23cbd5e1' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><circle cx='6' cy='109' r='4' fill='%23111827' opacity='.35'/></g></svg>"),
+          url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 220'><g transform='rotate(30 110 110)'><rect x='28' y='98' width='132' height='22' rx='11' fill='%23f3d36b' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><rect x='160' y='98' width='20' height='22' rx='7' fill='%23f4a3b6' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><rect x='178' y='100' width='8' height='18' rx='4' fill='%23d1d5db' opacity='.7'/><polygon points='28,98 10,109 28,120' fill='%23cbd5e1' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><circle cx='6' cy='109' r='4' fill='%23111827' opacity='.35'/></g></svg>"),
+          url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 220'><g transform='rotate(-10 110 110)'><rect x='28' y='98' width='132' height='22' rx='11' fill='%23f3d36b' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><rect x='160' y='98' width='20' height='22' rx='7' fill='%23f4a3b6' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><rect x='178' y='100' width='8' height='18' rx='4' fill='%23d1d5db' opacity='.7'/><polygon points='28,98 10,109 28,120' fill='%23cbd5e1' stroke='%23111827' stroke-opacity='.14' stroke-width='2'/><circle cx='6' cy='109' r='4' fill='%23111827' opacity='.35'/></g></svg>");
+      }
+
+      /* contenu au-dessus */
+      .page{
+        position: relative;
+        z-index: 1;
+      }
+    </style>
+</head>
+
+<body id="top">
+<div class="page">
+
+    <!-- HEADER -->
+    <header class="site-header">
+        <div class="site-header-inner">
+            <div class="header-bar max-w">
+
+                <!-- NAV GAUCHE -->
+                <nav class="site-nav site-nav-left">
+                    <a href="animation.html">Animation</a>
+                    <a href="appro.html">Appro</a>
+                    <a href="com.html">Com</a>
+                    <a href="estu.html">Estu</a>
+                </nav>
+
+                <!-- LOGO CENTRÉ -->
+                <div class="logo-container">
+                    <a href="../index.html#top" class="logo-link">
+                        <img
+                                src="../../assets/TheAmazingPicasso.png"
+                                alt="The Amazing Picasso"
+                                class="logo-image"
+                        />
+                    </a>
+                </div>
+
+                <!-- NAV DROITE -->
+                <nav class="site-nav site-nav-right">
+                    <a href="info.html">Info</a>
+                    <a href="locaux.html">Locaux</a>
+                    <a href="rse.html">RSE</a>
+                    <a href="treso.html">Tréso</a>
+                </nav>
+
+            </div>
+        </div>
+    </header>
+
+    <main>
+
+        <!-- HERO COM (atelier créatif) -->
+        <section class="hero">
+            <div class="max-w hero-inner reveal" data-parallax="0.02">
+                <div class="hero-kicker">Axes du projet</div>
+                <h1 class="hero-title">
+                    Com<br />
+                    <span>créative, drôle, efficace.</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Likez l'edit Kombucha svp. S/O la Com de la Disc'ESTUUUUU
+                </p>
+
+                <!-- stickers décoratifs (pure déco, sans assets obligatoires) -->
+                <div aria-hidden="true" style="position: relative; height: 0;">
+                    <div style="position:absolute; left: 8%; top: -20px; transform: rotate(-10deg); opacity:0.9; font-size: 1.05rem; background: rgba(255,255,255,0.9); border:1px solid rgba(17,24,39,0.10); border-radius: 999px; padding: 0.45rem 0.75rem; box-shadow: 0 14px 30px rgba(17,24,39,0.10);">✨ créativité</div>
+                    <div style="position:absolute; left: 70%; top: -36px; transform: rotate(12deg); opacity:0.9; font-size: 1.05rem; background: rgba(255,255,255,0.9); border:1px solid rgba(17,24,39,0.10); border-radius: 999px; padding: 0.45rem 0.75rem; box-shadow: 0 14px 30px rgba(17,24,39,0.10);">📹 réels</div>
+                    <div style="position:absolute; left: 52%; top: 8px; transform: rotate(-6deg); opacity:0.9; font-size: 1.05rem; background: rgba(255,255,255,0.9); border:1px solid rgba(17,24,39,0.10); border-radius: 999px; padding: 0.45rem 0.75rem; box-shadow: 0 14px 30px rgba(17,24,39,0.10);">🧷 stickers</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- INTRO (différent des autres pages : double punchline) -->
+        <section class="section">
+            <div class="max-w">
+                <div class="section-header reveal">
+                    <div class="section-kicker">Vision</div>
+                    <h2 class="section-title">Je prends la com au sérieux…</h2>
+                    <p class="section-subtitle">…mais jamais trop 😄</p>
+                </div>
+
+                <div class="category-layout" style="align-items: start;">
+                    <div class="reveal">
+                        <div class="project-card" style="margin-bottom: 1.2rem;">
+                            <div class="project-title">Objectif</div>
+                            <div class="project-meta">Donner envie • clarifier • faire vivre</div>
+                            <div class="project-text">
+                                La com du Pic doit donner envie de passer, mais aussi rendre les infos claires :
+                                nouveautés, événements, règles, outils… sans spam.
+                            </div>
+                        </div>
+
+                        <div class="project-card">
+                            <div class="project-title">Mon style</div>
+                            <div class="project-meta">Créatif, un peu pitre, toujours lisible</div>
+                            <div class="project-text">
+                                J’aime tester des formats (affiches, stickers, réels, mini pubs) — tant que le message reste compréhensible et utile. (Y a le vaiselle partout ?!)
+                            </div>
+                        </div>
+                    </div>
+
+                    <aside class="category-side-card reveal" data-parallax="0.02">
+                        <div class="category-side-title">Ce que je sais produire</div>
+                        <p class="category-side-text">Quelques formats que j'ai plutôt l'habitude de faire.</p>
+                        <div class="pill-row">
+                            <span class="pill">Affiches</span>
+                            <span class="pill">Post / Stories</span>
+                            <span class="pill">Réels</span>
+                            <span class="pill">Stickers</span>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </section>
+
+        <!-- GALERIE -->
+        <section class="section">
+            <div class="max-w">
+                <div class="section-header reveal">
+                    <div class="section-kicker">Mes créations</div>
+                    <h2 class="section-title">Mon Portfolio 🤭</h2>
+                    <p class="section-subtitle">
+                        Ouais ouais j'ai une petite âme d'artiste / créatif, quelques exemples de mes super créations graphiques / audio-visuel !
+                    </p>
+                </div>
+
+                <div class="cards-grid cards-grid-2col gallery-wall reveal">
+
+                    <button class="nav-card" type="button" data-work
+                            data-kind="Affiche"
+                            data-title="Affiche – DISC'ESTUUUU"
+                            data-desc="En vrai c'était bien la Disc'Estu ou pas ?"
+                            data-meta="Boule Disco 1.5m"
+                            data-src="../../assets/com/ESTU1.png"
+                            data-src2="../../assets/com/ESTU2.png"
+                            style="text-align:left; transform: rotate(-1.5deg);">
+                        <div class="nav-card-label">Affiche</div>
+                        <h3 class="nav-card-title">Affiche – ESTUUUUUU</h3>
+                        <p class="nav-card-text">Oui oui je sais on a compris la Disc'Estu c'était super</p>
+                        <div class="nav-card-arrow">Zoom →</div>
+                    </button>
+
+                    <button class="nav-card" type="button" data-work
+                            data-kind="Logo"
+                            data-title="Logo – Trop beaux"
+                            data-desc="C'est carré en tout cas. Lettre = 3:k"
+                            data-meta="Pas trop fort en logo en vrai"
+                            data-src="../../assets/com/LogosWall.png"
+                            style="text-align:left; transform: rotate(1.2deg);">
+                        <div class="nav-card-label">Logo</div>
+                        <h3 class="nav-card-title">Logo – Trop beaux</h3>
+                        <p class="nav-card-text">Un système d’identité facile à décliner sur tous supports.</p>
+                        <div class="nav-card-arrow">Zoom →</div>
+                    </button>
+
+                    <button class="nav-card" type="button" data-work
+                            data-kind="Reels"
+                            data-title="Edits"
+                            data-desc="Humour + info utile : nouveautés, events..."
+                            data-meta="C'est un peu drole non ?"
+                            data-src="../../assets/com/PoufEditWhoua.mp4"
+                            data-src2="../../assets/com/pasciao.mp4"
+                            style="text-align:left; transform: rotate(-0.8deg);">
+                        <div class="nav-card-label">Edit</div>
+                        <h3 class="nav-card-title">Supers Réels</h3>
+                        <p class="nav-card-text">Court, efficace et toujours super fun</p>
+                        <div class="nav-card-arrow">Zoom →</div>
+                    </button>
+
+                    <button class="nav-card" type="button" data-work
+                            data-kind="Stickers"
+                            data-title="Mes Stickers"
+                            data-desc="Des stickers qu’on a vraiment… pendant le semestre (et peut-être aller vraiment imprimer ceux là ??)"
+                            data-meta="Ils sont beaux en vrai nan ?"
+                            data-src="../../assets/com/StickersWall.png"
+                            style="text-align:left; transform: rotate(1.8deg);">
+                        <div class="nav-card-label">Stickers</div>
+                        <h3 class="nav-card-title">Stickers – série</h3>
+                        <p class="nav-card-text">Petite farandole des stickers que j'ai fait <br>(liste non-exhaustive évidement)</p>
+                        <div class="nav-card-arrow">Zoom →</div>
+                    </button>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- AMÉLIORATIONS / NOUVEAUTÉS (format “menu” miniature pour varier) -->
+        <section class="section">
+            <div class="max-w">
+                <div class="section-header reveal">
+                    <div class="section-kicker">Améliorations / Nouveautés</div>
+                    <h2 class="section-title">Les choses à lancer (ou relancer ?)</h2>
+                    <p class="section-subtitle">Des formats simples, répétés, qui rendent le Pic plus vivant et plus clair.</p>
+                </div>
+
+                <div class="reveal" style="border-radius: 22px; border: 1px solid rgba(17,24,39,0.12); background: rgba(255,255,255,0.82); box-shadow: 0 18px 50px rgba(17,24,39,0.10); overflow:hidden;">
+                    <div style="padding: 1.0rem 1.2rem; border-bottom: 1px solid rgba(17,24,39,0.10); background: linear-gradient(120deg, rgba(177,30,42,0.10), rgba(99,102,241,0.10));">
+                        <div style="font-weight: 900; font-size: 1.35rem;">🍿 La carte des idées</div>
+                        <div style="opacity: 0.7; margin-top: 0.15rem;">format “menu” pour que ce soit lisible (et fun)</div>
+                    </div>
+
+                    <div style="padding: 1.0rem 1.2rem 1.2rem;">
+                        <!-- item -->
+                        <div style="padding: 0.75rem 0; border-top: 1px dashed rgba(17,24,39,0.18);">
+                            <div style="display:flex; align-items:baseline; gap: 0.6rem;">
+                                <div style="font-weight: 900; font-size: 1.2rem;">⚡ Zap’Pic</div>
+                                <div style="flex:1; border-bottom: 2px dotted rgba(17,24,39,0.18); transform: translateY(-2px);"></div>
+                                <div style="font-weight: 900; color: rgba(17,24,39,0.55);">hebdo</div>
+                            </div>
+                            <div style="color: rgba(17,24,39,0.72); margin-top: 0.25rem;">
+                                Un format court, drôle, régulier : la vie du Pic résumée sans prise de tête.
+                            </div>
+                        </div>
+
+                        <!-- item -->
+                        <div style="padding: 0.75rem 0; border-top: 1px dashed rgba(17,24,39,0.18);">
+                            <div style="display:flex; align-items:baseline; gap: 0.6rem;">
+                                <div style="font-weight: 900; font-size: 1.2rem;">🎬 Vidéo de présentation</div>
+                                <div style="flex:1; border-bottom: 2px dotted rgba(17,24,39,0.18); transform: translateY(-2px);"></div>
+                                <div style="font-weight: 900; color: rgba(17,24,39,0.55);">refresh</div>
+                            </div>
+                            <div style="color: rgba(17,24,39,0.72); margin-top: 0.25rem;">
+                                Une vidéo qui donne envie de pousser la porte (et pas une archive qui date un peu cf. la vidéo de présentation sur YT qui à 3 ans).
+                            </div>
+                        </div>
+
+                        <!-- item -->
+                        <div style="padding: 0.75rem 0; border-top: 1px dashed rgba(17,24,39,0.18);">
+                            <div style="display:flex; align-items:baseline; gap: 0.6rem;">
+                                <div style="font-weight: 900; font-size: 1.2rem;">🪧 Signalétique</div>
+                                <div style="flex:1; border-bottom: 2px dotted rgba(17,24,39,0.18); transform: translateY(-2px);"></div>
+                                <div style="font-weight: 900; color: rgba(17,24,39,0.55);">teaser</div>
+                            </div>
+                            <div style="color: rgba(17,24,39,0.72); margin-top: 0.25rem;">
+                                Pas de spoil ici 👀 (indice : va voir la page RSE).
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROJETS À CONTINUER / POUSSER (format device / TV) -->
+        <section class="section">
+            <div class="max-w">
+                <div class="section-header reveal">
+                    <div class="section-kicker">À continuer / pousser</div>
+                    <h2 class="section-title">Exploiter les supports</h2>
+                    <p class="section-subtitle">
+                        L’idée : faire mieux avec ce qu’on a déjà (télés, sérigraphie, stickers), avec des formats simples.
+                    </p>
+                </div>
+
+                <div class="projects-list">
+                    <div class="project-card reveal">
+                        <div class="project-title">📺 Les télés : mini “téléachat”</div>
+                        <div class="project-meta">Nouveautés • vaisselle • stop le vol • rappels utiles</div>
+                        <div class="project-text">
+                            Des messages courts, drôles et répétés : une pub “téléachat” pour les nouveautés,
+                            un rappel vaisselle, stop le vol.
+                        </div>
+                    </div>
+
+                    <div class="project-card reveal">
+                        <div class="project-title">🖨️ Sérigraphie pour tout le monde</div>
+                        <div class="project-meta">Pas élitiste • accessible • communauté</div>
+                        <div class="project-text">
+                            Faire une sérigraphie pour tout le monde (et pour le Pic aussi d'ailleurs). Comme en A24 quoi
+                        </div>
+                    </div>
+
+                    <div class="project-card reveal">
+                        <div class="project-title">🧷 Des stickers… pendant le semestre</div>
+                        <div class="project-meta">Production cadrée • stock minimal • réassort</div>
+                        <div class="project-text">
+                            Faut arrêter le “on en aura le semestre d’après”.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <div class="max-w footer-inner">
+                The Amazing Picasso — Com ·
+                <span><a href="../index.html#top">Retour à l’accueil</a> pour explorer les autres axes.</span>
+            </div>
+        </footer>
+
+    </main>
+</div>
+
+<!-- MODAL (zoom création) -->
+<div class="badge-modal" id="workModal" aria-hidden="true">
+    <div class="badge-modal-backdrop" data-work-close></div>
+
+    <div class="badge-modal-panel" role="dialog" aria-modal="true" aria-labelledby="workModalTitle">
+        <button class="badge-modal-close" type="button" data-work-close aria-label="Fermer">✕</button>
+
+        <div class="badge-modal-content" style="grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);">
+            <div>
+                <div class="badge-hero" id="workHero" style="width: min(520px, 78vw);">
+                    <img id="workHeroImg" src="" alt="" />
+                    <div class="work-video-wrap is-idle" id="workVideoWrap" style="display:none;">
+                        <video id="workHeroVideo" class="work-hero-video" playsinline loop></video>
+                        <div class="work-video-overlay" aria-hidden="false">
+                            <button class="work-video-playbtn" type="button" id="workVideoPlayBtn">
+                                ▶ Lire (avec son)
+                            </button>
+                        </div>
+                    </div>
+                    <div class="badge-hero-shine" id="workHeroShine" style="opacity:0.55;"></div>
+                </div>
+            </div>
+
+            <div>
+                <div class="badge-modal-kicker" id="workModalKicker">Création</div>
+                <h3 class="badge-modal-title" id="workModalTitle">Titre</h3>
+
+                <ul class="badge-modal-meta">
+                    <li><span>Type</span><strong id="workMetaKind">—</strong></li>
+                    <li><span>Détails</span><strong id="workMetaInfo">—</strong></li>
+                </ul>
+
+                <p class="badge-modal-desc" id="workMetaDesc">—</p>
+                <button class="btn-soft" type="button" id="workVariantBtn" hidden>
+                    Variante
+                </button>
+                <div style="height: 10px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../script.js"></script>
+
+<!-- JS spécifique COM (tilt + modal) -->
+<script>
+    (function () {
+        // --- Parallax crayons (fond) ---
+        const root = document.documentElement;
+        let rafP = null;
+        const updatePencils = () => {
+            const y = window.scrollY || window.pageYOffset || 0;
+            // subtil, juste pour donner de la vie
+            root.style.setProperty('--pencil-parallax', `${-(y * 0.06)}px`);
+            root.style.setProperty('--pencil-parallax-2', `${-(y * 0.10)}px`);
+            rafP = null;
+        };
+        const onScrollP = () => {
+            if (rafP != null) return;
+            rafP = requestAnimationFrame(updatePencils);
+        };
+        window.addEventListener('scroll', onScrollP, { passive: true });
+        window.addEventListener('resize', onScrollP, { passive: true });
+        updatePencils();
+        const modal = document.getElementById('workModal');
+        const hero = document.getElementById('workHero');
+        const heroImg = document.getElementById('workHeroImg');
+        const heroVideo = document.getElementById('workHeroVideo');
+        const videoWrap = document.getElementById('workVideoWrap');
+        const videoPlayBtn = document.getElementById('workVideoPlayBtn');
+        const titleEl = document.getElementById('workModalTitle');
+        const kickerEl = document.getElementById('workModalKicker');
+        const kindEl = document.getElementById('workMetaKind');
+        const infoEl = document.getElementById('workMetaInfo');
+        const descEl = document.getElementById('workMetaDesc');
+
+        const variantBtn = document.getElementById('workVariantBtn');
+
+        let baseSrc = '';
+        let altSrc = '';
+        let showingAlt = false;
+
+        let baseVideo = '';
+        let altVideo = '';
+        let mediaType = 'image'; // 'image' | 'video'
+
+        const isVideoFile = (u) => /\.(mp4|webm|ogg)(\?|#|$)/i.test(u || '');
+
+        const setHeroToImage = (src, alt) => {
+            mediaType = 'image';
+            if (heroVideo) {
+                heroVideo.pause?.();
+                heroVideo.removeAttribute('src');
+                heroVideo.load?.();
+            }
+            if (videoWrap) {
+                videoWrap.style.display = 'none';
+                videoWrap.classList.add('is-idle');
+            }
+            if (heroImg) {
+                heroImg.style.display = '';
+                heroImg.src = src || '';
+                heroImg.alt = alt || '';
+            }
+        };
+
+        const setHeroToVideo = (src) => {
+            mediaType = 'video';
+
+            if (heroImg) {
+                heroImg.removeAttribute('src');
+                heroImg.style.display = 'none';
+            }
+
+            if (videoWrap) {
+                videoWrap.style.display = '';
+                videoWrap.classList.add('is-idle');
+            }
+
+            if (heroVideo) {
+                heroVideo.pause?.();
+                heroVideo.src = src || '';
+                heroVideo.load?.();
+
+                // sound intent (will only actually play with sound after a user gesture)
+                heroVideo.muted = false;
+                heroVideo.volume = 1;
+            }
+        };
+
+        const open = () => {
+            if (!modal) return;
+            modal.classList.add('is-open');
+            modal.setAttribute('aria-hidden', 'false');
+            document.documentElement.style.overflow = 'hidden';
+        };
+
+        const close = () => {
+            if (!modal) return;
+            modal.classList.remove('is-open');
+            modal.setAttribute('aria-hidden', 'true');
+            document.documentElement.style.overflow = '';
+            if (hero) hero.style.transform = 'rotateX(0deg) rotateY(0deg) translateZ(0)';
+            baseSrc = '';
+            altSrc = '';
+            showingAlt = false;
+            baseVideo = '';
+            altVideo = '';
+            mediaType = 'image';
+            if (heroVideo) {
+                heroVideo.pause?.();
+                heroVideo.removeAttribute('src');
+                heroVideo.load?.();
+            }
+            if (videoWrap) {
+                videoWrap.style.display = 'none';
+                videoWrap.classList.add('is-idle');
+            }
+            if (heroImg) heroImg.style.display = '';
+            if (variantBtn) {
+                variantBtn.hidden = true;
+                variantBtn.textContent = 'Variante';
+            }
+        };
+
+        // Open on card click
+        document.querySelectorAll('[data-work]').forEach((card) => {
+            card.addEventListener('click', () => {
+                const kind = card.getAttribute('data-kind') || 'Création';
+                const t = card.getAttribute('data-title') || 'Création';
+                const d = card.getAttribute('data-desc') || '—';
+                const m = card.getAttribute('data-meta') || '—';
+                const src = card.getAttribute('data-src') || '';
+                const src2 = card.getAttribute('data-src2') || '';
+                const video = card.getAttribute('data-video') || '';
+                const video2 = card.getAttribute('data-video2') || '';
+
+                baseSrc = src;
+                altSrc = src2;
+
+                // Support either explicit data-video, OR using data-src when it's a video file
+                baseVideo = video || (isVideoFile(src) ? src : '');
+                altVideo = video2 || (isVideoFile(src2) ? src2 : '');
+
+                showingAlt = false;
+
+                // Decide media type
+                if (baseVideo) {
+                    setHeroToVideo(baseVideo);
+                } else {
+                    setHeroToImage(baseSrc, t);
+                }
+
+                if (kickerEl) kickerEl.textContent = 'Création';
+                if (titleEl) titleEl.textContent = t;
+                if (kindEl) kindEl.textContent = kind;
+                if (infoEl) infoEl.textContent = m;
+                if (descEl) descEl.textContent = d;
+                if (variantBtn) {
+                    const hasVariant = (baseVideo && altVideo) || (!baseVideo && altSrc);
+                    variantBtn.hidden = !hasVariant;
+                    variantBtn.textContent = 'Variante';
+                }
+
+                open();
+            });
+        });
+
+        if (variantBtn) {
+            variantBtn.addEventListener('click', () => {
+                // Image variant
+                if (mediaType === 'image') {
+                    if (!heroImg || !altSrc) return;
+                    showingAlt = !showingAlt;
+                    setHeroToImage(showingAlt ? altSrc : baseSrc, titleEl ? titleEl.textContent : '');
+                    return;
+                }
+
+                // Video variant
+                if (mediaType === 'video') {
+                    if (!heroVideo || !altVideo) return;
+                    showingAlt = !showingAlt;
+                    setHeroToVideo(showingAlt ? altVideo : baseVideo);
+                }
+            });
+        }
+
+        // Close handlers
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target.closest('[data-work-close]')) close();
+            });
+
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modal.classList.contains('is-open')) close();
+            });
+        }
+
+        // --- Custom video play button (user gesture => sound allowed) ---
+        const tryPlayWithSound = async () => {
+            if (!heroVideo) return;
+            try {
+                heroVideo.muted = false;
+                heroVideo.volume = 1;
+                await heroVideo.play();
+                if (videoWrap) videoWrap.classList.remove('is-idle');
+            } catch (err) {
+                // If blocked, keep overlay visible
+                if (videoWrap) videoWrap.classList.add('is-idle');
+            }
+        };
+
+        if (videoPlayBtn) {
+            videoPlayBtn.addEventListener('click', () => {
+                // This click is the user gesture browsers want
+                tryPlayWithSound();
+            });
+        }
+
+        if (heroVideo) {
+            heroVideo.addEventListener('pause', () => {
+                if (videoWrap) videoWrap.classList.add('is-idle');
+            });
+            heroVideo.addEventListener('ended', () => {
+                if (videoWrap) videoWrap.classList.add('is-idle');
+            });
+            heroVideo.addEventListener('play', () => {
+                if (videoWrap) videoWrap.classList.remove('is-idle');
+            });
+
+            // Click on the video toggles play/pause (still counts as gesture)
+            heroVideo.addEventListener('click', () => {
+                if (heroVideo.paused) tryPlayWithSound();
+                else heroVideo.pause();
+            });
+        }
+
+        // Tilt “global” sur les cards (aimanté, zone large) + smooth
+        (function () {
+            const cards = Array.from(document.querySelectorAll('[data-work]'));
+            if (!cards.length) return;
+
+            const maxRotate = 10;
+            const damping = 0.14;
+
+            const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+            const lerp = (a, b, t) => a + (b - a) * t;
+
+            const state = new Map();
+            cards.forEach((c) => state.set(c, { trx: 0, try: 0, crx: 0, cry: 0, raf: null }));
+
+            const tick = (card) => {
+                const s = state.get(card);
+                if (!s) return;
+
+                s.crx = lerp(s.crx, s.trx, damping);
+                s.cry = lerp(s.cry, s.try, damping);
+
+                card.style.transform = `rotateX(${s.crx}deg) rotateY(${s.cry}deg)`;
+                s.raf = requestAnimationFrame(() => tick(card));
+            };
+
+            const ensure = (card) => {
+                const s = state.get(card);
+                if (!s || s.raf != null) return;
+                s.raf = requestAnimationFrame(() => tick(card));
+            };
+
+            const setTargetFromPointer = (card, x, y) => {
+                const rect = card.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+
+                const denomX = Math.max(380, rect.width * 1.8);
+                const denomY = Math.max(380, rect.height * 1.8);
+
+                const nx = (x - cx) / denomX;
+                const ny = (y - cy) / denomY;
+
+                const px = clamp(nx, -1, 1);
+                const py = clamp(ny, -1, 1);
+
+                const s = state.get(card);
+                if (!s) return;
+
+                s.try = px * maxRotate;
+                s.trx = -py * maxRotate;
+            };
+
+            const reset = (card) => {
+                const s = state.get(card);
+                if (!s) return;
+                s.trx = 0;
+                s.try = 0;
+            };
+
+            // On écoute le mouvement sur toute la page et on “aimante” les cartes
+            window.addEventListener('mousemove', (e) => {
+                cards.forEach((card) => {
+                    setTargetFromPointer(card, e.clientX, e.clientY);
+                    ensure(card);
+                });
+            }, { passive: true });
+
+            window.addEventListener('mouseleave', () => {
+                cards.forEach((card) => reset(card));
+            }, { passive: true });
+        })();
+
+        // Tilt + shine smooth dans la modal (sur toute la page)
+        if (hero && modal) {
+            const maxRotate = 18;
+            const zDepth = 16;
+            const damping = 0.12;
+
+            const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+            const lerp = (a, b, t) => a + (b - a) * t;
+
+            let targetRX = 0, targetRY = 0;
+            let currentRX = 0, currentRY = 0;
+            let rafId = null;
+
+            const setTargets = (clientX, clientY) => {
+                const rect = hero.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+
+                const denomX = Math.max(520, rect.width * 2.2);
+                const denomY = Math.max(520, rect.height * 2.2);
+
+                const nx = (clientX - cx) / denomX;
+                const ny = (clientY - cy) / denomY;
+
+                targetRY = clamp(nx, -1, 1) * maxRotate;
+                targetRX = clamp(-ny, -1, 1) * maxRotate;
+            };
+
+            const loop = () => {
+                if (!modal.classList.contains('is-open')) {
+                    targetRX = 0; targetRY = 0;
+                }
+
+                currentRX = lerp(currentRX, targetRX, damping);
+                currentRY = lerp(currentRY, targetRY, damping);
+
+                hero.style.transform = `rotateX(${currentRX}deg) rotateY(${currentRY}deg) translateZ(${zDepth}px)`;
+
+                rafId = requestAnimationFrame(loop);
+            };
+
+            const start = () => {
+                if (rafId != null) return;
+                rafId = requestAnimationFrame(loop);
+            };
+
+            const stop = () => {
+                if (rafId == null) return;
+                cancelAnimationFrame(rafId);
+                rafId = null;
+            };
+
+            window.addEventListener('mousemove', (e) => setTargets(e.clientX, e.clientY), { passive: true });
+            start();
+
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) stop();
+                else start();
+            });
+        }
+
+    })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>The Amazing Picasso – Estu</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../style.css" />
+    <style>
+        /* --- ESTU confetti background (page-wide) --- */
+        .confetti-bg {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1; /* derrière le contenu, au-dessus du bg body */
+            overflow: hidden;
+            opacity: 0.65;
+            filter: saturate(1.05);
+        }
+
+        /* keep content above confetti */
+        .page > main {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* header is already fixed in style.css; just ensure it stays above confetti */
+        .page > header {
+            z-index: 40;
+        }
+
+        .confetti-layer {
+            position: absolute;
+            inset: -12vh 0 -12vh 0;
+            transform: translate3d(0, var(--confetti-y, 0px), 0);
+            will-change: transform;
+        }
+
+        .confetti-layer.layer-2 {
+            opacity: 0.55;
+            transform: translate3d(0, var(--confetti-y2, 0px), 0);
+        }
+
+        .confetti-piece {
+            position: absolute;
+            border-radius: 6px;
+            transform: rotate(var(--r, 0deg));
+            opacity: var(--o, 0.9);
+            width: var(--s, 10px);
+            height: calc(var(--s, 10px) * 0.55);
+            background: var(--c, rgba(236, 72, 153, 0.55));
+            box-shadow: 0 10px 24px rgba(17,24,39,0.10);
+            animation: confettiFloat var(--d, 12s) ease-in-out infinite;
+            animation-delay: var(--delay, 0s);
+            will-change: transform;
+        }
+
+        .confetti-piece.round {
+            border-radius: 999px;
+            height: var(--s, 10px);
+        }
+
+        @keyframes confettiFloat {
+            0%, 100% {
+                transform: translate3d(0, 0, 0) rotate(var(--r, 0deg));
+            }
+            50% {
+                transform: translate3d(0, 18px, 0) rotate(calc(var(--r, 0deg) + 16deg));
+            }
+        }
+
+        /* soften on mobile */
+        @media (max-width: 720px) {
+            .confetti-bg { opacity: 0.45; }
+            .confetti-piece { box-shadow: 0 8px 18px rgba(17,24,39,0.08); }
+        }
+    </style>
+</head>
+
+<body id="top">
+<div class="page">
+    <!-- Confettis (fond de page + parallax) -->
+    <div class="confetti-bg" aria-hidden="true">
+        <div class="confetti-layer layer-1">
+            <!-- rectangles -->
+            <span class="confetti-piece" style="left: 6%; top: 10%; --c: rgba(249,115,22,0.55); --s: 14px; --r: -18deg; --d: 11s; --delay: -2s; --o: 0.95;"></span>
+            <span class="confetti-piece" style="left: 14%; top: 34%; --c: rgba(236,72,153,0.55); --s: 12px; --r: 22deg; --d: 13s; --delay: -6s;"></span>
+            <span class="confetti-piece" style="left: 22%; top: 62%; --c: rgba(99,102,241,0.55); --s: 13px; --r: -10deg; --d: 12s; --delay: -4s;"></span>
+            <span class="confetti-piece" style="left: 30%; top: 18%; --c: rgba(16,185,129,0.55); --s: 11px; --r: 14deg; --d: 10s; --delay: -8s;"></span>
+            <span class="confetti-piece" style="left: 38%; top: 44%; --c: rgba(250,204,21,0.55); --s: 15px; --r: -26deg; --d: 14s; --delay: -3s;"></span>
+            <span class="confetti-piece" style="left: 46%; top: 72%; --c: rgba(244,63,94,0.55); --s: 12px; --r: 28deg; --d: 12s; --delay: -9s;"></span>
+            <span class="confetti-piece" style="left: 54%; top: 26%; --c: rgba(59,130,246,0.55); --s: 13px; --r: -8deg; --d: 11s; --delay: -5s;"></span>
+            <span class="confetti-piece" style="left: 62%; top: 54%; --c: rgba(168,85,247,0.55); --s: 14px; --r: 18deg; --d: 15s; --delay: -7s;"></span>
+            <span class="confetti-piece" style="left: 70%; top: 14%; --c: rgba(245,158,11,0.55); --s: 12px; --r: -20deg; --d: 10.5s; --delay: -1s;"></span>
+            <span class="confetti-piece" style="left: 78%; top: 40%; --c: rgba(34,197,94,0.55); --s: 11px; --r: 24deg; --d: 13.5s; --delay: -10s;"></span>
+            <span class="confetti-piece" style="left: 86%; top: 66%; --c: rgba(236,72,153,0.55); --s: 13px; --r: -14deg; --d: 12.5s; --delay: -2s;"></span>
+            <span class="confetti-piece" style="left: 92%; top: 22%; --c: rgba(99,102,241,0.55); --s: 15px; --r: 16deg; --d: 14.5s; --delay: -6s;"></span>
+
+            <!-- rounds -->
+            <span class="confetti-piece round" style="left: 10%; top: 78%; --c: rgba(249,115,22,0.40); --s: 10px; --r: 0deg; --d: 12s; --delay: -3s;"></span>
+            <span class="confetti-piece round" style="left: 34%; top: 86%; --c: rgba(99,102,241,0.38); --s: 9px; --r: 0deg; --d: 13s; --delay: -7s;"></span>
+            <span class="confetti-piece round" style="left: 58%; top: 8%; --c: rgba(236,72,153,0.38); --s: 9px; --r: 0deg; --d: 11s; --delay: -5s;"></span>
+            <span class="confetti-piece round" style="left: 82%; top: 82%; --c: rgba(16,185,129,0.38); --s: 10px; --r: 0deg; --d: 14s; --delay: -9s;"></span>
+        </div>
+
+        <div class="confetti-layer layer-2">
+            <span class="confetti-piece" style="left: 4%; top: 48%; --c: rgba(250,204,21,0.35); --s: 10px; --r: 18deg; --d: 16s; --delay: -8s;"></span>
+            <span class="confetti-piece" style="left: 18%; top: 12%; --c: rgba(59,130,246,0.32); --s: 11px; --r: -22deg; --d: 18s; --delay: -4s;"></span>
+            <span class="confetti-piece" style="left: 32%; top: 58%; --c: rgba(244,63,94,0.32); --s: 9px; --r: 14deg; --d: 17s; --delay: -10s;"></span>
+            <span class="confetti-piece" style="left: 44%; top: 22%; --c: rgba(168,85,247,0.30); --s: 12px; --r: -10deg; --d: 19s; --delay: -6s;"></span>
+            <span class="confetti-piece" style="left: 56%; top: 70%; --c: rgba(34,197,94,0.30); --s: 10px; --r: 20deg; --d: 18.5s; --delay: -12s;"></span>
+            <span class="confetti-piece" style="left: 68%; top: 36%; --c: rgba(236,72,153,0.30); --s: 11px; --r: -16deg; --d: 17.5s; --delay: -9s;"></span>
+            <span class="confetti-piece" style="left: 80%; top: 8%; --c: rgba(99,102,241,0.30); --s: 10px; --r: 12deg; --d: 19.5s; --delay: -7s;"></span>
+            <span class="confetti-piece" style="left: 92%; top: 54%; --c: rgba(249,115,22,0.30); --s: 12px; --r: -8deg; --d: 18s; --delay: -11s;"></span>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header class="site-header">
+        <div class="site-header-inner">
+            <div class="header-bar max-w">
+
+                <!-- NAV GAUCHE -->
+                <nav class="site-nav site-nav-left">
+                    <a href="animation.html">Animation</a>
+                    <a href="appro.html">Appro</a>
+                    <a href="com.html">Com</a>
+                    <a href="estu.html">Estu</a>
+                </nav>
+
+                <!-- LOGO CENTRÉ -->
+                <div class="logo-container">
+                    <a href="../index.html#top" class="logo-link">
+                        <img
+                                src="../../assets/TheAmazingPicasso.png"
+                                alt="The Amazing Picasso"
+                                class="logo-image"
+                        />
+                    </a>
+                </div>
+
+                <!-- NAV DROITE -->
+                <nav class="site-nav site-nav-right">
+                    <a href="info.html">Info</a>
+                    <a href="locaux.html">Locaux</a>
+                    <a href="rse.html">RSE</a>
+                    <a href="treso.html">Tréso</a>
+                </nav>
+
+            </div>
+        </div>
+    </header>
+
+    <main>
+
+        <!-- HERO (festif/confettis + grandeur Estu) -->
+        <section class="hero">
+            <div class="max-w hero-inner reveal" data-parallax="0.02">
+
+                <!-- confettis décoratifs (CSS inline pour style unique Estu) -->
+                <div aria-hidden="true" style="position: relative; height: 0;">
+                    <div style="position:absolute; left: 6%; top: -28px; transform: rotate(-10deg); opacity:0.95; font-size: 1.05rem; background: rgba(255,255,255,0.92); border:1px solid rgba(17,24,39,0.10); border-radius: 999px; padding: 0.45rem 0.75rem; box-shadow: 0 14px 30px rgba(17,24,39,0.10);">🎉 Fun fun fun</div>
+                    <div style="position:absolute; left: 72%; top: -40px; transform: rotate(12deg); opacity:0.95; font-size: 1.05rem; background: rgba(255,255,255,0.92); border:1px solid rgba(17,24,39,0.10); border-radius: 999px; padding: 0.45rem 0.75rem; box-shadow: 0 14px 30px rgba(17,24,39,0.10);">🅿️ parking</div>
+                    <div style="position:absolute; left: 50%; top: 10px; transform: rotate(-6deg); opacity:0.95; font-size: 1.05rem; background: rgba(255,255,255,0.92); border:1px solid rgba(17,24,39,0.10); border-radius: 999px; padding: 0.45rem 0.75rem; box-shadow: 0 14px 30px rgba(17,24,39,0.10);">🧡 prévention</div>
+                </div>
+
+                <div class="hero-kicker">Axes du projet</div>
+                <h1 class="hero-title">
+                    Estu<br />
+                    <span>gros event, grosse anticipation.</span>
+                </h1>
+                <p class="hero-subtitle">
+                    <strong>~1500 personnes</strong> dans le parking de BF ça se prépare:
+                    être attentif au <strong>calendrier</strong>, l'<strong>implentation</strong>, la <strong>prévention</strong>
+                    et toujours accueillant.
+                </p>
+
+            </div>
+        </section>
+
+        <!-- OPS DASHBOARD (style unique: “poste de contrôle”) -->
+        <section class="section">
+            <div class="max-w">
+                <div class="section-header reveal">
+                    <div class="section-kicker">Poste de contrôle</div>
+                    <h2 class="section-title">Welcome en board</h2>
+                    <p class="section-subtitle">
+                        Ladies and gentlemen, welcome onboard Flight P26 with service from Picasso to Parking BF. We are currently third in line for take-off and are expected to be in the air in approximately seven minutes time. We ask that you please fasten your seatbelts at this time and secure all baggage underneath your seat or in the overhead compartments.
+                    </p>
+                </div>
+
+                <div class="category-layout" style="align-items: start;">
+                    <div class="reveal">
+                        <div class="project-card" style="margin-bottom: 1.2rem;">
+                            <div class="project-title">🗓️ Le réflexe calendrier (obligatoire)</div>
+                            <div class="project-meta">UTC • BDE • Ville • prestas</div>
+                            <div class="project-text">
+                                Avant d’annoncer une date : on recoupe tout (évènements UTC, gros concerts, réservations, périodes d’examens).
+                                Objectif : éviter les doublons (S/O NRJ Music Tour le jour de l’Estu 😅).
+                            </div>
+                        </div>
+
+                        <div class="project-card" style="margin-bottom: 1.2rem;">
+                            <div class="project-title">🅿️ Implant & travaux : on assume le bazar</div>
+                            <div class="project-meta">Plan A / Plan B • zones • accès secours</div>
+                            <div class="project-text">
+                                Avec les travaux, l’implant se refait : circulation, files, entrée/sortie,
+                                zones calmes, point eau, prévention, accessibilité...
+                            </div>
+                        </div>
+
+                        <div class="project-card">
+                            <div class="project-title">🔠 Lettre cachée ?</div>
+                            <div class="project-meta">J'avoue celle-là est pas bien cachée</div>
+                            <div class="project-text">
+                                Lettre = 4:i
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <aside class="category-side-card reveal" data-parallax="0.02" style="border-radius: 22px;">
+                        <div class="category-side-title">Status board</div>
+                        <p class="category-side-text">On réparti les tâches dès le début</p>
+
+                        <div style="display:grid; gap: 0.6rem;">
+                            <div style="display:flex; justify-content:space-between; gap: 0.8rem; padding: 0.8rem 0.9rem; border-radius: 16px; border: 1px solid rgba(17,24,39,0.10); background: rgba(249,250,251,0.75);">
+                                <div style="font-weight: 800;">Date</div>
+                                <div style="font-weight: 800; color: rgba(17,24,39,0.65);">À valider</div>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; gap: 0.8rem; padding: 0.8rem 0.9rem; border-radius: 16px; border: 1px solid rgba(17,24,39,0.10); background: rgba(249,250,251,0.75);">
+                                <div style="font-weight: 800;">Travaux / scène</div>
+                                <div style="font-weight: 800; color: rgba(17,24,39,0.65);">À suivre</div>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; gap: 0.8rem; padding: 0.8rem 0.9rem; border-radius: 16px; border: 1px solid rgba(17,24,39,0.10); background: rgba(249,250,251,0.75);">
+                                <div style="font-weight: 800;">Prévention</div>
+                                <div style="font-weight: 800; color: rgba(17,24,39,0.65);">À pousser</div>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; gap: 0.8rem; padding: 0.8rem 0.9rem; border-radius: 16px; border: 1px solid rgba(17,24,39,0.10); background: rgba(249,250,251,0.75);">
+                                <div style="font-weight: 800;">Partenaires</div>
+                                <div style="font-weight: 800; color: rgba(17,24,39,0.65);">On avance</div>
+                            </div>
+                        </div>
+
+                        <div style="height: 12px;"></div>
+                        <div class="pill-row">
+                            <span class="pill">Implant</span>
+                            <span class="pill">Graill’UT</span>
+                            <span class="pill">Mocktails</span>
+                            <span class="pill">RSE</span>
+                        </div>
+
+                        <div style="height: 12px;"></div>
+                        <div class="project-card" style="margin: 0; background: rgba(177,30,42,0.06); border-color: rgba(177,30,42,0.18);">
+                            <div class="project-title">Règle</div>
+                            <div class="project-meta">simple mais vital</div>
+                            <div class="project-text">On écrit : qui fait quoi et quand.</div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </section>
+
+        <!-- AMÉLIORATIONS / NOUVEAUTÉS -->
+        <section class="section">
+            <div class="max-w">
+                <div class="section-header reveal">
+                    <div class="section-kicker">Améliorations / Nouveautés</div>
+                    <h2 class="section-title">À mettre en place</h2>
+                    <p class="section-subtitle">Des actions qui changent l’expérience sans surcharger l’orga.</p>
+                </div>
+
+                <div class="projects-list">
+                    <div class="project-card reveal">
+                        <div class="project-title">🧠 Bien regarder le calendrier de tout</div>
+                        <div class="project-meta">anti-conflits • anti-déceptions</div>
+                        <div class="project-text">
+                            Une étape obligatoire avant annonce : check UTC/BDE/ville + prestas.
+                            Ça évite les surprises...
+                        </div>
+                    </div>
+
+                    <div class="project-card reveal">
+                        <div class="project-title">🧴 +++ Prévention à l’entrée</div>
+                        <div class="project-meta">bouchons • préservatifs • infos</div>
+                        <div class="project-text">
+                            Prévention visible dès l’entrée : bouchons d’oreille, préservatifs, capotes à verre,
+                            affichage clair (safe-zone) + point “si tu te sens pas bien”.
+                        </div>
+                    </div>
+
+                    <div class="project-card reveal">
+                        <div class="project-title">🚚 Camion du SATO sur le parking</div>
+                        <div class="project-meta">réduction des risques • présence pro</div>
+                        <div class="project-text">
+                            Faire venir le SATO (Service d’Aide aux Toxicomanes de l’Oise) :
+                            présence utile et rassurante.
+                        </div>
+                    </div>
+
+                    <div class="project-card reveal">
+                        <div class="project-title">🗺️ Revoir l’implant (travaux)</div>
+                        <div class="project-meta">flux • accès secours • zones</div>
+                        <div class="project-text">
+                            Implant repensé avec les travaux dans le parking, on met où la scène wsh ?
+                        </div>
+                    </div>
+
+                    <div class="project-card reveal">
+                        <div class="project-title">🎛️ Subvention → Scène (10 000€)</div>
+                        <div class="project-meta">scène • lights • FX (raisonnables 😄)</div>
+                        <div class="project-text">
+                            Bon pas 10k€ mais demander des subs pour l'ESTU c'est cool et ça baisse le prix de la place !
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHECKLIST (style “brief de prod”) -->
+        <section class="section">
+            <div class="max-w">
+                <div class="section-header reveal">
+                    <div class="section-kicker">Méthode</div>
+                    <h2 class="section-title">Dès la 1ère réu</h2>
+                    <p class="section-subtitle">
+                        Pour éviter que les membres du Pic payent leur place à l'Estu (oups)
+                    </p>
+                </div>
+
+                <div class="reveal" data-parallax="0.02"
+                     style="border-radius: 22px; border: 1px solid rgba(17,24,39,0.12); background: rgba(255,255,255,0.82); box-shadow: 0 18px 50px rgba(17,24,39,0.10); overflow:hidden;">
+
+                    <div style="padding: 1.0rem 1.2rem; border-bottom: 1px solid rgba(17,24,39,0.10); background: linear-gradient(120deg, rgba(236,72,153,0.12), rgba(249,115,22,0.10), rgba(99,102,241,0.10));">
+                        <div style="font-weight: 900; font-size: 1.35rem;">📋 Checklist Estu</div>
+                    </div>
+
+                    <div style="padding: 1.0rem 1.2rem 1.2rem; display: grid; gap: 0.75rem;">
+                        <div class="project-card" style="margin:0;">
+                            <div class="project-title">1) Bien expliquer l’Estu dès la 1ère réu</div>
+                            <div class="project-text">Objectifs, contraintes, rôles, timeline et “qui décide quoi”.</div>
+                        </div>
+                        <div class="project-card" style="margin:0;">
+                            <div class="project-title">2) Bien motiver les gens dès le début</div>
+                            <div class="project-text">Un plan + des tâches rapides (com / DA, présta...).</div>
+                        </div>
+                        <div class="project-card" style="margin:0;">
+                            <div class="project-title">3) Demander aux prestas (et le PMDE cœur cœur) très tôt</div>
+                            <div class="project-text">Pour éviter les “oops trop tard”.</div>
+                        </div>
+                        <div class="project-card" style="margin:0;">
+                            <div class="project-title">4) Mocktails / soft</div>
+                            <div class="project-text">Aligné avec l’axe <strong>Appro</strong> (à construire en B2B avec eux).</div>
+                        </div>
+                        <div class="project-card" style="margin:0;">
+                            <div class="project-title">5) RSE & cadre</div>
+                            <div class="project-text">Aligné avec l’axe <strong>RSE</strong> (cohérence globale).</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <footer class="footer">
+            <div class="max-w footer-inner">
+                The Amazing Picasso — Estu ·
+                <span><a href="../index.html#top">Retour à l’accueil</a> pour explorer les autres axes.</span>
+            </div>
+        </footer>
+
+    </main>
+</div>
+
+<script>
+    (function () {
+        const bg = document.querySelector('.confetti-bg');
+        if (!bg) return;
+
+        let raf = null;
+        let targetY = 0;
+        let targetY2 = 0;
+        let currentY = 0;
+        let currentY2 = 0;
+
+        const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+        const lerp = (a, b, t) => a + (b - a) * t;
+
+        const updateTargets = () => {
+            const y = window.scrollY || window.pageYOffset || 0;
+            // parallax subtil (fond)
+            targetY = clamp(-y * 0.06, -220, 220);
+            targetY2 = clamp(-y * 0.10, -320, 320);
+        };
+
+        const tick = () => {
+            currentY = lerp(currentY, targetY, 0.10);
+            currentY2 = lerp(currentY2, targetY2, 0.10);
+
+            bg.style.setProperty('--confetti-y', `${currentY}px`);
+            bg.style.setProperty('--confetti-y2', `${currentY2}px`);
+
+            raf = requestAnimationFrame(tick);
+        };
+
+        const onScroll = () => {
+            updateTargets();
+            if (raf == null) raf = requestAnimationFrame(tick);
+        };
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll, { passive: true });
+        updateTargets();
+        raf = requestAnimationFrame(tick);
+
+        // pause if tab hidden
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                if (raf != null) cancelAnimationFrame(raf);
+                raf = null;
+            } else {
+                updateTargets();
+                if (raf == null) raf = requestAnimationFrame(tick);
+            }
+        });
+    })();
+</script>
+<script src="../script.js"></script>
+</body>
+</html>

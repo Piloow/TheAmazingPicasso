@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>The Amazing Picasso – Appro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../style.css" />
+<style>
+  /* --- Appro: fond perso "ardoise" + line-art (parallax) --- */
+  body.appro-page { background: #f3f3f1; }
+
+  /* Reset default body margin (avoid top/side gaps) */
+  body.appro-page { margin: 0; }
+
+  /* Header: truly fixed to viewport (do NOT nest inside transformed containers) */
+  body.appro-page .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 80;
+  }
+
+  /* Reserve space for the fixed header so content doesn't slide under it */
+  body.appro-page main {
+    padding-top: 98px; /* 86px header + ~12px breathing room */
+  }
+
+  /* Safety: éviter le scroll horizontal (ne pas toucher aux transforms du layout) */
+  body.appro-page { overflow-x: hidden; }
+
+
+  /* Background layers */
+  .appro-bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1; /* derrière le contenu, au-dessus du fond body */
+    overflow: hidden;
+  }
+
+  /* Keep content above bg (do NOT override header positioning) */
+  body.appro-page main {
+    position: relative;
+    z-index: 2;
+  }
+
+  body.appro-page .site-header {
+    z-index: 80;
+  }
+
+  .appro-bg .layer {
+    position: absolute;
+    inset: -10vh 0 -10vh 0;
+    transform: translate3d(0, var(--appro-y, 0px), 0);
+    will-change: transform;
+  }
+
+
+  /* Slightly soften the main layer too */
+  .appro-bg .layer.layer-1 {
+    opacity: 0.48;
+  }
+
+  /* Ardoise light: grain + léger vignettage */
+  .appro-bg .grain {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 20% 10%, rgba(17,24,39,0.06), transparent 55%),
+      radial-gradient(circle at 85% 35%, rgba(17,24,39,0.05), transparent 60%),
+      radial-gradient(circle at 30% 90%, rgba(17,24,39,0.045), transparent 55%),
+      linear-gradient(180deg, rgba(255,255,255,0.65), rgba(255,255,255,0.25));
+    filter: saturate(1.02);
+    opacity: 1;
+  }
+
+  /* Faux "noise" via multi gradients (safe, pas d'image) */
+  .appro-bg .noise {
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(0deg, rgba(17,24,39,0.015) 0, rgba(17,24,39,0.015) 1px, transparent 1px, transparent 6px),
+      repeating-linear-gradient(90deg, rgba(17,24,39,0.012) 0, rgba(17,24,39,0.012) 1px, transparent 1px, transparent 7px);
+    mix-blend-mode: multiply;
+    opacity: 0.35;
+  }
+
+  /* Line-art SVG (cover large screens + cleaner rendering) */
+  .appro-bg svg {
+    width: 140vmax;              /* always large enough to cover */
+    min-width: 1200px;
+    max-width: none;
+    height: auto;
+    opacity: 0.42;
+    filter: saturate(1.02);
+    shape-rendering: geometricPrecision;
+    text-rendering: geometricPrecision;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  .appro-bg .svg-wrap {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 140vmax;
+    min-width: 1200px;
+  }
+
+  /* Responsive: moins chargé sur mobile */
+  @media (max-width: 720px) {
+    .appro-bg svg { opacity: 0.28; min-width: 0; width: 120vw; }
+    .appro-bg .noise { opacity: 0.22; }
+  }
+</style>
+</head>
+
+<body id="top" class="appro-page">
+
+<!-- HEADER -->
+<header class="site-header">
+    <div class="site-header-inner">
+        <div class="header-bar max-w">
+
+            <!-- NAV GAUCHE -->
+            <nav class="site-nav site-nav-left">
+                <a href="animation.html">Animation</a>
+                <a href="appro.html">Appro</a>
+                <a href="com.html">Com</a>
+                <a href="estu.html">Estu</a>
+            </nav>
+
+            <!-- LOGO CENTRÉ -->
+            <div class="logo-container">
+                <a href="../index.html#top" class="logo-link">
+                    <img
+                            src="../../assets/TheAmazingPicasso.png"
+                            alt="The Amazing Picasso"
+                            class="logo-image"
+                    />
+                </a>
+            </div>
+
+            <!-- NAV DROITE -->
+            <nav class="site-nav site-nav-right">
+                <a href="info.html">Info</a>
+                <a href="locaux.html">Locaux</a>
+                <a href="rse.html">RSE</a>
+                <a href="treso.html">Tréso</a>
+            </nav>
+
+        </div>
+    </div>
+</header>
+
+<div class="page">
+<!-- Appro BG (ardoise + line-art, parallax) -->
+<div class="appro-bg" aria-hidden="true">
+  <div class="grain"></div>
+  <div class="noise"></div>
+
+  <div class="layer layer-1">
+    <div class="svg-wrap">
+      <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg" role="presentation">
+        <defs>
+          <pattern id="p" width="260" height="260" patternUnits="userSpaceOnUse">
+            <!-- Cup -->
+            <g transform="translate(28,24) rotate(-6 70 70)" fill="none" stroke="rgba(17,24,39,0.26)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M30 68h94l-6 52H36z"/>
+              <path d="M42 68c0-24 70-24 70 0"/>
+              <path d="M124 78c18 0 26 22 10 32"/>
+              <path d="M92 22c10 12 10 24 0 36"/>
+              <path d="M68 18c10 14 10 28 0 42"/>
+            </g>
+          </pattern>
+        </defs>
+
+        <rect x="0" y="0" width="1200" height="800" fill="url(#p)" />
+      </svg>
+    </div>
+  </div>
+
+</div>
+    <main>
+        <!-- HERO (différent d’Animation : plus “produit”) -->
+        <section class="hero">
+            <div class="max-w hero-inner reveal" data-parallax="0.02">
+                <div class="hero-kicker">Axes du projet</div>
+                <h1 class="hero-title">
+                    Appro<br />
+                    <span>soft + bière + snacks (et un peu de magie)</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Une offre fun et lisible, mais surtout simple à tenir :
+                    des repères, des formats et des outils pour éviter les galères.
+                </p>
+            </div>
+        </section>
+
+        <!-- INTRO (design différent : 2 colonnes + side card) -->
+        <section class="section">
+            <div class="max-w">
+                <div class="section-header reveal">
+                    <div class="section-kicker">Appro – en bref</div>
+                    <h2 class="section-title">Une carte qui donne envie, un Pic qui respire</h2>
+                    <p class="section-subtitle">
+                        Appro, ce n’est pas juste acheter : c’est rendre l’offre cohérente, améliorer l’expérience
+                        et mettre en place des outils pour que la team n’ait pas à tout “réinventer”.
+                    </p>
+                </div>
+
+                <div class="category-layout" style="align-items: start;">
+                    <!-- GAUCHE -->
+                    <div class="reveal">
+                        <div class="project-card" style="margin-bottom: 1.2rem;">
+                            <div class="project-title">Les 3 principes</div>
+                            <div class="project-meta">Lisibilité • Plaisir • Opérationnel</div>
+                            <div class="project-text">
+                                <ul style="margin: 0.6rem 0 0 1.2rem;">
+                                    <li><strong>Lisibilité :</strong> des formats clairs, une offre compréhensible.</li>
+                                    <li><strong>Plaisir :</strong> un peu plus de variété (cocktails/mocktails, canettes, mini cave “amateurs”...).</li>
+                                    <li><strong>Opérationnel :</strong> outils pour le suivi (suivis fûts/inventaire...).</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DROITE -->
+                    <aside class="category-side-card reveal" data-parallax="0.02">
+                        <div class="category-side-title">Ça permet</div>
+                        <p class="category-side-text">
+                            Des changements rapides, visibles, utiles au quotidien.
+                        </p>
+                        <div class="pill-row">
+                            <span class="pill">Tableau salle à fût</span>
+                            <span class="pill">Plateau dégust</span>
+                            <span class="pill">+ canettes</span>
+                            <span class="pill">Mocktails</span>
+                        </div>
+
+                        <div style="height: 14px;"></div>
+
+                        <div class="category-side-title">Appro “fun”</div>
+                        <p class="category-side-text">
+                            Des idées qui font plaisir, mais cadrées (petites quantités, peu de refs).
+                        </p>
+                    </aside>
+                </div>
+            </div>
+        </section>
+
+        <!-- MENU BOARD (carte de restaurant) -->
+        <section class="section">
+            <div class="max-w">
+                <div class="section-header reveal">
+                    <div class="section-kicker">La carte</div>
+                    <h2 class="section-title">Menu du Picasso</h2>
+                    <p class="section-subtitle">
+                        Qu'est ce que je vous sert aujourd'hui messieurs ?
+                    </p>
+                </div>
+
+                <div class="reveal" data-parallax="0.02"
+                     style="border-radius: 24px; border: 1px solid rgba(17,24,39,0.12); box-shadow: 0 22px 60px rgba(17,24,39,0.10); background: rgba(255,255,255,0.82); overflow: hidden;">
+
+                    <!-- bandeau top (carte) -->
+                    <div style="padding: 1.1rem 1.25rem; background: linear-gradient(120deg, rgba(249,115,22,0.12), rgba(236,72,153,0.10), rgba(99,102,241,0.12)); border-bottom: 1px solid rgba(17,24,39,0.10);">
+                        <div style="display:flex; align-items:flex-end; justify-content:space-between; gap: 1rem; flex-wrap: wrap;">
+                            <div>
+                                <div style="font-size: 0.95rem; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(17,24,39,0.65);">Carte du moment</div>
+                                <div style="font-size: 2.0rem; letter-spacing: -0.03em; margin-top: 0.15rem; font-weight: 800;">🍽️ Les incontournables</div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 0.7rem; display:flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <span class="pill">Soft / vrac du mois</span>
+                            <span class="pill">Mocktail du moment</span>
+                            <span class="pill">Canette spotlight</span>
+                            <span class="pill">Mini cave “amateurs”</span>
+                        </div>
+                    </div>
+
+                    <!-- contenu carte -->
+                    <div style="padding: 1.15rem 1.25rem 1.25rem;">
+                        <div style="display:grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem;">
+
+                            <!-- COLONNE GAUCHE -->
+                            <div style="border-radius: 18px; padding: 1.05rem 1.05rem 0.95rem; border: 1px solid rgba(17,24,39,0.10); background: rgba(249,250,251,0.8);">
+                                <div style="font-size: 1.05rem; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(17,24,39,0.55); margin-bottom: 0.55rem;">Boissons</div>
+
+                                <!-- item -->
+                                <div style="padding: 0.65rem 0; border-top: 1px dashed rgba(17,24,39,0.18);">
+                                    <div style="display:flex; align-items:baseline; gap: 0.6rem;">
+                                        <div style="font-weight: 800; font-size: 1.15rem;">🧃 Soft du mois</div>
+                                        <div style="flex:1; border-bottom: 2px dotted rgba(17,24,39,0.18); transform: translateY(-2px);"></div>
+                                        <div style="font-weight: 800; color: rgba(17,24,39,0.65);">€</div>
+                                    </div>
+                                    <div style="color: rgba(17,24,39,0.68); margin-top: 0.25rem;">Soft du mois c'est connu mais pourquoi pas “vrac du mois” (ou autre ?) pour mettre en avant un produit.</div>
+                                </div>
+
+                                <!-- item -->
+                                <div style="padding: 0.65rem 0; border-top: 1px dashed rgba(17,24,39,0.18);">
+                                    <div style="display:flex; align-items:baseline; gap: 0.6rem;">
+                                        <div style="font-weight: 800; font-size: 1.15rem;">🍹 Cocktail / Mocktail du moment</div>
+                                        <div style="flex:1; border-bottom: 2px dotted rgba(17,24,39,0.18); transform: translateY(-2px);"></div>
+                                        <div style="font-weight: 800; color: rgba(17,24,39,0.65);">€</div>
+                                    </div>
+                                    <div style="color: rgba(17,24,39,0.68); margin-top: 0.25rem;">C'était super alors pourquoi pas remettre (Monaco, Jackline, etc.) ?</div>
+                                </div>
+
+                                <!-- item -->
+                                <div style="padding: 0.65rem 0; border-top: 1px dashed rgba(17,24,39,0.18);">
+                                    <div style="display:flex; align-items:baseline; gap: 0.6rem;">
+                                        <div style="font-weight: 800; font-size: 1.15rem;">🍺 Canette spotlight</div>
+                                        <div style="flex:1; border-bottom: 2px dotted rgba(17,24,39,0.18); transform: translateY(-2px);"></div>
+                                        <div style="font-weight: 800; color: rgba(17,24,39,0.65);">€</div>
+                                    </div>
+                                    <div style="color: rgba(17,24,39,0.68); margin-top: 0.25rem;">Plus de variété, simple à stocker, parfait en soirée thème.</div>
+                                </div>
+
+                                <!-- item -->
+                                <div style="padding: 0.65rem 0; border-top: 1px dashed rgba(17,24,39,0.18);">
+                                    <div style="display:flex; align-items:baseline; gap: 0.6rem;">
+                                        <div style="font-weight: 800; font-size: 1.15rem;">✨ Mini cave “amateurs”</div>
+                                        <div style="flex:1; border-bottom: 2px dotted rgba(17,24,39,0.18); transform: translateY(-2px);"></div>
+                                        <div style="font-weight: 800; color: rgba(17,24,39,0.65);">€€</div>
+                                    </div>
+                                    <div style="color: rgba(17,24,39,0.68); margin-top: 0.25rem;">Petites quantités, 1–2 refs / semaine : une vitrine, pas une usine.</div>
+                                </div>
+                            </div>
+
+                            <!-- COLONNE DROITE -->
+                            <div style="border-radius: 18px; padding: 1.05rem 1.05rem 0.95rem; border: 1px solid rgba(17,24,39,0.10); background: rgba(249,250,251,0.8);">
+                                <div style="font-size: 1.05rem; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(17,24,39,0.55); margin-bottom: 0.55rem;">Snacks & idées</div>
+
+                                <div style="padding: 0.65rem 0; border-top: 1px dashed rgba(17,24,39,0.18);">
+                                    <div style="display:flex; align-items:baseline; gap: 0.6rem;">
+                                        <div style="font-weight: 800; font-size: 1.15rem;">🧀 Goûter du jour</div>
+                                        <div style="flex:1; border-bottom: 2px dotted rgba(17,24,39,0.18); transform: translateY(-2px);"></div>
+                                        <div style="font-weight: 800; color: rgba(17,24,39,0.65);">€</div>
+                                    </div>
+                                    <div style="color: rgba(17,24,39,0.68); margin-top: 0.25rem;">Avec le <strong>livre des goûters</strong> : on a déjà les recettes des repas, maintenant le goûter.</div>
+                                </div>
+
+                                <div style="padding: 0.65rem 0; border-top: 1px dashed rgba(17,24,39,0.18);">
+                                    <div style="display:flex; align-items:baseline; gap: 0.6rem;">
+                                        <div style="font-weight: 800; font-size: 1.15rem;">🧪 Plateau dégust</div>
+                                        <div style="flex:1; border-bottom: 2px dotted rgba(17,24,39,0.18); transform: translateY(-2px);"></div>
+                                        <div style="font-weight: 800; color: rgba(17,24,39,0.65);">€€</div>
+                                    </div>
+                                    <div style="color: rgba(17,24,39,0.68); margin-top: 0.25rem;">On voulait le faire avec Ewen (spoil on l'a pas fait).</div>
+                                </div>
+
+                                <div style="padding: 0.65rem 0; border-top: 1px dashed rgba(17,24,39,0.18);">
+                                    <div style="display:flex; align-items:baseline; gap: 0.6rem;">
+                                        <div style="font-weight: 800; font-size: 1.15rem;">🧊 Tableau inventaire</div>
+                                        <div style="flex:1; border-bottom: 2px dotted rgba(17,24,39,0.18); transform: translateY(-2px);"></div>
+                                        <div style="font-weight: 800; color: rgba(17,24,39,0.65);">—</div>
+                                    </div>
+                                    <div style="color: rgba(17,24,39,0.68); margin-top: 0.25rem;">Fûts-Softs en cours / à surveiller / à commander : fini les ruptures surprises.</div>
+                                </div>
+
+                                <div style="margin-top: 0.85rem; padding: 0.9rem; border-radius: 16px; background: rgba(177,30,42,0.08); border: 1px solid rgba(177,30,42,0.20);">
+                                    <div style="font-weight: 900;">💡 C'est pas clair l'idée du tableau ?</div>
+                                    <div style="margin-top: 0.25rem; color: rgba(17,24,39,0.70);">
+                                        C'est plus détaillé en dessous
+                                        <br> Lettre = 2:i (wink wink)
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AMÉLIORATIONS / NOUVEAUTÉS -->
+        <section class="section">
+            <div class="max-w">
+                <div class="section-header reveal">
+                    <div class="section-kicker">Améliorations / Nouveautés</div>
+                    <h2 class="section-title">Ici c'est pour choquer</h2>
+                    <p class="section-subtitle">
+                        Évidement c'est juste des propals pour vous montrer comment j'ai bossé (j'ai vraiment bossé je jure).
+                    </p>
+                </div>
+
+                <div class="projects-list">
+                    <div class="project-card reveal" style="background-color: #ffeef0">
+                        <div class="project-title"><b>🧑‍🍳 Réorganisation Appro : 2 “Liquide” + 2 “Solide” ????</b> C'est koi ce bazar encore</div>
+                        <div class="project-meta">Plus simple • plus équilibré • plus résilient</div>
+                        <div class="project-text">
+                            Je ne vous apprend rien sur les Appro : <strong>3 Appro-Soft</strong> et <strong>1 Appro-Bière</strong>.
+                            <br>Et pourquoi pas changer un peu (oui oui oui on reviens encore sur l'idée des 2 appro Binchs - mais pas pareil - ):
+                            <ul style="margin: 0.6rem 0 0 1.2rem;">
+                                <li><strong>2 Appro Liquide</strong> : soft + café + bière</li>
+                                <li><strong>2 Appro Solide</strong> : repas, sandwichs, vrac, chips, tartinades, saucissons…</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="project-card reveal">
+                        <div class="project-title">🔪 Trancheuse à saucisson</div>
+                        <div class="project-meta">Sécurité • vitesse • planches apéro</div>
+                        <div class="project-text">
+                            Une trancheuse (même simple) : c’est plus rapide, plus propre et ça évite que des gens se baladent avec des couteaux.
+                            Bonus : ultra pratique pour les <strong>plateaux / planches apéro</strong>.
+                        </div>
+                    </div>
+
+                    <div class="project-card reveal">
+                        <div class="project-title">🧾 Organisation des roulement</div>
+                        <div class="project-meta">Un petit tableau youhouuu</div>
+                        <div class="project-text">
+                            Salle à fût : petit tableau veleda avec fûts en cours / fûts à suivre pour faciliter le roulement et moins se reposer sur l'appro binch.
+                        </div>
+                    </div>
+                    <div class="project-card reveal">
+                        <div class="project-title">🌡️ Température frigos / groupe froid</div>
+                        <div class="project-meta">Moins de gâchis • meilleure bière • confort</div>
+                        <div class="project-text">
+                            en vrai c’est un peu trop froid : ça peut <strong>gâcher certaines bières</strong> (goûts, mousse, service) et abîmer des produits.
+                            <br>Régler proprement (et noter la valeur) + faire un mini check régulier.
+                        </div>
+                    </div>
+
+                    <div class="project-card reveal">
+                        <div class="project-title">📊 Suivi des stocks</div>
+                        <div class="project-meta">Un seul endroit pour voir l’état</div>
+                        <div class="project-text">
+                            Utiliser l'info pour avoir un suivis de l'inventaire (ouais vous en avez parler dans votre candid)
+                            <br> On en reparle au point Info (kiss kiss)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- À CONTINUER / POUSSER (design “roadmap” léger : 3 cartes plus stratégiques) -->
+        <section class="section">
+            <div class="max-w">
+                <div class="section-header reveal">
+                    <div class="section-kicker">À continuer / pousser</div>
+                    <h2 class="section-title">Ce qu’on structure dans la durée</h2>
+                    <p class="section-subtitle">
+                        Des chantiers qui deviennent “naturels” semestre après semestre, sans dépendre d’une seule personne.
+                    </p>
+                </div>
+
+                <div class="projects-list">
+                    <div class="project-card reveal">
+                        <div class="project-title">Livre des recettes</div>
+                        <div class="project-meta">S/O N’Utrition (c'était dans notre candid avec Ewen gros Big up)</div>
+                        <div class="project-text">
+                            Enrichir le livre des recettes des repas (Avec N'Utrition par exemple)
+                            <br> Faire un super livre des recettes pour le goûter
+                        </div>
+                    </div>
+
+                    <div class="project-card reveal">
+                        <div class="project-title">Petit-déj / vrac</div>
+                        <div class="project-meta">Formule petit dej, céréales en vrac…</div>
+                        <div class="project-text">
+                            Tester une offre formule petit-déj (ça se faisait à l'époque un peu) / vrac : simple, rentable, facile à tenir.
+                        </div>
+                    </div>
+
+                    <div class="project-card reveal">
+                        <div class="project-title">Soirées bières “spéciales”</div>
+                        <div class="project-meta">En fonction des perms (ou non)</div>
+                        <div class="project-text">
+                            Pousser encore plus les soirées thème style “soirée de la pisse”, bières rouges, en rapport avec les perms…
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <div class="max-w footer-inner">
+                The Amazing Picasso — Appro ·
+                <span><a href="../index.html#top">Retour à l’accueil</a> pour explorer les autres axes.</span>
+            </div>
+        </footer>
+    </main>
+</div>
+
+<script>
+  (function () {
+    const bg = document.querySelector('.appro-bg');
+    if (!bg) return;
+
+    let raf = null;
+    let targetY = 0;
+    let currentY = 0;
+
+    const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+    const lerp = (a, b, t) => a + (b - a) * t;
+
+    const updateTargets = () => {
+      const y = window.scrollY || window.pageYOffset || 0;
+      targetY = clamp(-y * 0.05, -220, 220);
+    };
+
+    const tick = () => {
+      currentY = lerp(currentY, targetY, 0.10);
+      bg.style.setProperty('--appro-y', `${currentY}px`);
+      raf = requestAnimationFrame(tick);
+    };
+
+    const onScroll = () => {
+      updateTargets();
+      if (raf == null) raf = requestAnimationFrame(tick);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+
+    updateTargets();
+    raf = requestAnimationFrame(tick);
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        if (raf != null) cancelAnimationFrame(raf);
+        raf = null;
+      } else {
+        updateTargets();
+        if (raf == null) raf = requestAnimationFrame(tick);
+      }
+    });
+  })();
+</script>
+<script src="../script.js"></script>
+</body>
+</html>

@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>The Amazing Picasso – RSE</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <style>
+    /* ==========================
+       RSE – identité (sobre, DD)
+       ========================== */
+
+    /* Fond feuille/papier (au-dessus du bg global) */
+    .rse-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    /* Contenu au-dessus du fond */
+    .page > main {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Le header doit rester fixed (défini dans style.css). On force juste son stacking au-dessus. */
+    .site-header {
+      z-index: 40;
+    }
+
+    .rse-bg::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      /* Papier clair + voile vert */
+      background:
+        radial-gradient(circle at top, rgba(16,185,129,0.10), rgba(255,255,255,0.00) 55%),
+        radial-gradient(circle at 20% 70%, rgba(34,197,94,0.10), rgba(255,255,255,0.00) 55%),
+        linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,252,0.98));
+    }
+
+    /* Pattern “points” + légère parallax */
+    .rse-bg::after {
+      content: "";
+      position: absolute;
+      inset: -12vh -6vw;
+      transform: translate3d(var(--rse-y, 0px), var(--rse-x, 0px), 0);
+      will-change: transform;
+      opacity: 0.22;
+      background-image:
+        radial-gradient(rgba(17,24,39,0.22) 1px, transparent 1px);
+      background-size: 16px 16px;
+      filter: saturate(1.1);
+    }
+
+    /* Feuilles flottantes */
+    .leaf-layer {
+      position: absolute;
+      inset: -18vh 0 -18vh 0;
+      transform: translate3d(0, var(--leaf-y, 0px), 0);
+      will-change: transform;
+      opacity: 0.65;
+    }
+
+    .leaf {
+      position: absolute;
+      width: var(--s, 44px);
+      height: calc(var(--s, 44px) * 0.72);
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.60), rgba(255,255,255,0.00) 55%),
+                  linear-gradient(135deg, rgba(16,185,129,0.40), rgba(34,197,94,0.18));
+      box-shadow: 0 18px 44px rgba(17,24,39,0.08);
+      transform: rotate(var(--r, 0deg));
+      animation: leafFloat var(--d, 14s) ease-in-out infinite;
+      animation-delay: var(--delay, 0s);
+      filter: saturate(1.05);
+    }
+
+    .leaf::after {
+      content: "";
+      position: absolute;
+      left: 18%;
+      top: 22%;
+      width: 64%;
+      height: 2px;
+      opacity: 0.35;
+      background: rgba(17,24,39,0.35);
+      transform: rotate(-12deg);
+      border-radius: 999px;
+    }
+
+    @keyframes leafFloat {
+      0%, 100% { transform: translate3d(0, 0, 0) rotate(var(--r, 0deg)); }
+      50% { transform: translate3d(0, 18px, 0) rotate(calc(var(--r, 0deg) + 12deg)); }
+    }
+
+    /* “Badges” RSE (chips) */
+    .rse-pill {
+      border: 1px solid rgba(16,185,129,0.35);
+      background: rgba(16,185,129,0.08);
+    }
+
+    /* Bloc “Safe Zone” style panneau */
+    .safezone-panel {
+      border-radius: 22px;
+      border: 1px solid rgba(16,185,129,0.20);
+      background: rgba(255,255,255,0.86);
+      box-shadow: 0 20px 60px rgba(17,24,39,0.10);
+      overflow: hidden;
+    }
+
+    .safezone-top {
+      padding: 1rem 1.2rem;
+      border-bottom: 1px solid rgba(17,24,39,0.10);
+      background: linear-gradient(120deg, rgba(16,185,129,0.12), rgba(99,102,241,0.10), rgba(236,72,153,0.08));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .safezone-title {
+      font-weight: 900;
+      font-size: 1.35rem;
+    }
+
+    .safezone-badge {
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: rgba(17,24,39,0.72);
+      border: 1px solid rgba(17,24,39,0.12);
+      border-radius: 999px;
+      padding: 0.35rem 0.65rem;
+      background: rgba(255,255,255,0.70);
+    }
+
+    .safezone-grid {
+      padding: 1.05rem 1.2rem 1.2rem;
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 1rem;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .safezone-grid { grid-template-columns: minmax(0, 1fr); }
+    }
+
+    .safezone-card {
+      border-radius: 18px;
+      background: rgba(249,250,251,0.85);
+      border: 1px solid rgba(17,24,39,0.10);
+      padding: 1rem 1.1rem;
+    }
+
+    /* Galerie “Signa” : cartes tilt */
+    .signa-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.2rem;
+      margin-top: 1.2rem;
+    }
+
+    @media (max-width: 980px) {
+      .signa-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 720px) {
+      .signa-grid { grid-template-columns: minmax(0, 1fr); }
+    }
+
+    .signa-card {
+      border-radius: 22px;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(17,24,39,0.10);
+      box-shadow: 0 16px 50px rgba(17,24,39,0.10);
+      overflow: hidden;
+      transform-style: preserve-3d;
+      perspective: 900px;
+    }
+
+    .signa-thumb {
+      height: 170px;
+      background:
+        radial-gradient(circle at 25% 25%, rgba(16,185,129,0.18), rgba(255,255,255,0.00) 55%),
+        linear-gradient(120deg, rgba(99,102,241,0.10), rgba(236,72,153,0.08), rgba(16,185,129,0.10));
+      border-bottom: 1px solid rgba(17,24,39,0.10);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .signa-sticker {
+      position: absolute;
+      left: 14px;
+      top: 14px;
+      display: inline-flex;
+      gap: 0.45rem;
+      align-items: center;
+      padding: 0.45rem 0.65rem;
+      border-radius: 999px;
+      border: 1px solid rgba(17,24,39,0.12);
+      background: rgba(255,255,255,0.78);
+      font-weight: 900;
+    }
+
+    .signa-sticker span {
+      opacity: 0.7;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+    }
+
+    .signa-content {
+      padding: 1rem 1.1rem 1.1rem;
+    }
+
+    .signa-title {
+      font-size: 1.25rem;
+      margin-bottom: 0.35rem;
+      font-weight: 900;
+    }
+
+    .signa-text {
+      color: #374151;
+      font-size: 1.08rem;
+    }
+
+    .signa-card-inner {
+      transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(0);
+      transition: transform 0.18s ease;
+      will-change: transform;
+    }
+
+    /* Petits détails “accessibilité” */
+    .access-note {
+      margin-top: 0.9rem;
+      font-size: 1rem;
+      color: #6b7280;
+    }
+
+    /* Réduire un peu l'effet sur mobile */
+    @media (max-width: 720px) {
+      .leaf-layer { opacity: 0.45; }
+      .rse-bg::after { opacity: 0.16; }
+    }
+
+    .signa-thumb.has-img {
+        background: none; /* enlève le dégradé */
+    }
+
+    .signa-img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;      /* remplit sans déformer */
+        object-position: center;
+        display: block;
+        background-color: #000223;
+    }
+  </style>
+</head>
+
+<body id="top">
+  <div class="page">
+
+    <!-- Fond RSE (papier + feuilles) -->
+    <div class="rse-bg" aria-hidden="true">
+      <div class="leaf-layer">
+        <span class="leaf" style="left: 6%; top: 12%; --s: 54px; --r: -16deg; --d: 13s; --delay: -2s;"></span>
+        <span class="leaf" style="left: 18%; top: 66%; --s: 44px; --r: 22deg; --d: 15s; --delay: -7s;"></span>
+        <span class="leaf" style="left: 34%; top: 28%; --s: 48px; --r: -10deg; --d: 14s; --delay: -4s;"></span>
+        <span class="leaf" style="left: 52%; top: 74%; --s: 56px; --r: 18deg; --d: 16s; --delay: -9s;"></span>
+        <span class="leaf" style="left: 68%; top: 18%; --s: 46px; --r: -24deg; --d: 14.5s; --delay: -5s;"></span>
+        <span class="leaf" style="left: 82%; top: 52%; --s: 50px; --r: 14deg; --d: 15.5s; --delay: -8s;"></span>
+        <span class="leaf" style="left: 92%; top: 26%; --s: 42px; --r: -8deg; --d: 13.5s; --delay: -3s;"></span>
+      </div>
+    </div>
+
+    <!-- HEADER -->
+      <header class="site-header">
+          <div class="site-header-inner">
+              <div class="header-bar max-w">
+
+                  <!-- NAV GAUCHE -->
+                  <nav class="site-nav site-nav-left">
+                      <a href="animation.html">Animation</a>
+                      <a href="appro.html">Appro</a>
+                      <a href="com.html">Com</a>
+                      <a href="estu.html">Estu</a>
+                  </nav>
+
+                  <!-- LOGO CENTRÉ -->
+                  <div class="logo-container">
+                      <a href="../index.html#top" class="logo-link">
+                          <img
+                                  src="../../assets/TheAmazingPicasso.png"
+                                  alt="The Amazing Picasso"
+                                  class="logo-image"
+                          />
+                      </a>
+                  </div>
+
+                  <!-- NAV DROITE -->
+                  <nav class="site-nav site-nav-right">
+                      <a href="info.html">Info</a>
+                      <a href="locaux.html">Locaux</a>
+                      <a href="rse.html">RSE</a>
+                      <a href="treso.html">Tréso</a>
+                  </nav>
+
+              </div>
+          </div>
+      </header>
+
+    <main>
+
+      <!-- HERO -->
+      <section class="hero">
+        <div class="max-w hero-inner reveal" data-parallax="0.02">
+          <div class="hero-kicker">Axes du projet</div>
+          <h1 class="hero-title">
+            RSE<br />
+            <span>durable, inclusif, et plus lisible.</span>
+          </h1>
+          <p class="hero-subtitle">
+            Ici on parle d'<strong>environment</strong> (déchets, seconde main, sobriété), mais aussi de
+            <strong>social</strong> et d’<strong>inclusivité</strong> : un foyer plus clair, plus safe
+            et plus simple pour tout le monde.
+          </p>
+
+          <div class="pill-row" style="justify-content:center; margin-top: 1.1rem;">
+            <span class="pill rse-pill">🌱 Environnement</span>
+            <span class="pill rse-pill">🤝 Social</span>
+            <span class="pill rse-pill">🧩 Inclusivité</span>
+            <span class="pill rse-pill">🛟 Safe zone</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION : SIGNA + LISIBILITÉ -->
+      <section class="section">
+        <div class="max-w">
+          <div class="section-header reveal">
+            <div class="section-kicker">Lisibilité & accueil</div>
+            <h2 class="section-title">La signa, la signa, la signa !!</h2>
+            <p class="section-subtitle">
+              Une signalétique qui guide vraiment (et pas des bornes illisibles). L’idée :
+              des supports clairs, des pictos et des messages utiles — sans agresser les yeux.
+            </p>
+          </div>
+
+          <!-- Galerie de cartes tilt (placeholders) -->
+          <div class="signa-grid reveal" data-parallax="0.02">
+
+            <div class="signa-card" data-tilt-card>
+              <div class="signa-card-inner">
+                <div class="signa-thumb has-img">
+                    <img
+                            class="signa-img"
+                            src="../../assets/rse/AfficheBorne.png"
+                            alt="Exemple de signalétique : pictos & explications"
+                            loading="lazy"
+                    />
+                  <div class="signa-sticker">🪧 <span>Signa</span></div>
+                </div>
+                <div class="signa-content">
+                  <div class="signa-title">Pictos & explications</div>
+                  <div class="signa-text">
+                    Explications des bornes, machine à café... Pour faciliter l'utilisation du Pic au plus grand nombre.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="signa-card" data-tilt-card>
+              <div class="signa-card-inner">
+                <div class="signa-thumb has-img">
+                    <img
+                            class="signa-img"
+                            src="../../assets/rse/AfficheSafe.png"
+                            alt="Exemple de signalétique : pictos & explications"
+                            loading="lazy"
+                    />
+                  <div class="signa-sticker">🛟 <span>Safe</span></div>
+                </div>
+                <div class="signa-content">
+                  <div class="signa-title">Safe zone & Stop VSS</div>
+                  <div class="signa-text">
+                    Re-faire à neuf la com pour le numéro Stop VSS et pousser encore la com sur la Safe Zone.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="signa-card" data-tilt-card>
+              <div class="signa-card-inner">
+                <div class="signa-thumb has-img">
+                    <img
+                            class="signa-img"
+                            src="../../assets/rse/AffichePlan.png"
+                            alt="Exemple de signalétique : pictos & explications"
+                            loading="lazy"
+                    />
+                  <div class="signa-sticker">🖌️️ <span>Inclu</span></div>
+                </div>
+                <div class="signa-content">
+                  <div class="signa-title">Inclusif dès l’entrée</div>
+                  <div class="signa-text">
+                    Plan du Pic, où trouver quoi, les points importants, les entrées / les sorties. À inclure dans le projet d'aménagement extérieur ?
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION : AMÉLIORATIONS / NOUVEAUTÉS -->
+      <section class="section">
+        <div class="max-w">
+          <div class="section-header reveal">
+            <div class="section-kicker">Améliorations / Nouveautés</div>
+            <h2 class="section-title">À mettre en place</h2>
+            <p class="section-subtitle">De environment + du social + de l’inclusif.</p>
+          </div>
+
+          <div class="projects-list">
+
+            <div class="project-card reveal">
+              <div class="project-title">🎥 Interview / vlog MéGo (et autres prestas)</div>
+              <div class="project-meta">DD • filière • coulisses • S/O @Ewen candid Prez</div>
+              <div class="project-text">
+                Un format léger (interview/vlog) pour comprendre d’où viennent nos produits et comment on bosse avec eux (aller voir l'usine etc...). Étendre à d'autre présta ?
+              </div>
+            </div>
+
+            <div class="project-card reveal">
+              <div class="project-title">♻️ Jeux & anims : recyclerie / seconde main / fait main</div>
+              <div class="project-meta">Emmaüs • récup • DIY</div>
+              <div class="project-text">
+                Tout ce qui peut venir de la seconde main doit venir de la seconde main.
+                Et pousser les jeux personnalisés “Pic” (ou y a que moi qui trouve ça marrant ?).
+              </div>
+            </div>
+
+            <div class="project-card reveal">
+              <div class="project-title">🌱 Environnement : plus d’idées</div>
+              <div class="project-meta">sobriété • tri • achats</div>
+              <div class="project-text">
+                Mini-chantiers : mieux trier, mieux stocker, réduire les déchets évitables
+                et choisir des options plus propres quand c’est possible (un peu bateau mais ça reste un bon rappel).
+              </div>
+            </div>
+
+            <div class="project-card reveal">
+              <div class="project-title">🤝 Social & inclusif : rendre le Pic plus “facile”</div>
+              <div class="project-meta">repères • lisibilité • access</div>
+              <div class="project-text">
+                Les bornes illisibles (et autres), c’est tchao : définir des repères clairs et compréhensibles qui aident vraiment tout le monde (et évitent que des personnes se sentent "perdues"). Rôle Resp RSE : vraiment définir les pratiques à adopter par le reste de la team.
+              </div>
+            </div>
+
+            <div class="project-card reveal">
+              <div class="project-title">🎧 Boycott Spotify → Go Deezer</div>
+              <div class="project-meta">Nique Spotify • cohérence</div>
+              <div class="project-text">
+                Tout est dans le titre en vrai... Spotify c'est nul nul nul niveau RSE. Ça prend 5min de faire le transfert d'une plateforme à l'autre alors pourquoi pas ?
+              </div>
+            </div>
+
+              <div class="project-card reveal">
+                  <div class="project-title">📬 Et une adresse mail alors ?</div>
+                  <div class="project-meta">Formaliser • Responsabiliser</div>
+                  <div class="project-text">
+                      Vous ne le saviez peut être pas mais le Pic à une super adresse Gmail : <u>picasso.durable@gmail.com</u>. Eh oui comme quoi iels étaient déjà en avance à l'époque. Mais la remettre d'actualité serait pas mal, ça rentre dans votre idée de considérer la RSE comme un vrai rôle à part.
+                  </div>
+              </div>
+
+              <div class="project-card reveal">
+                  <div class="project-title">🚭 No Smoking Area</div>
+                  <div class="project-meta">Responsabiliser  • S/O Ewen encore, ce mec à toutes les bonnes idées enfaite ???</div>
+                  <div class="project-text">
+                      Trop de mégots par terre ? Les gens ne respectent pas les cendriers ? Un Pic cigarettes interdites (Vape toujours quand même faut pas abuser), définition d'un coin fumeur. Peut-être commencer par appliquer une politique plus stricte sur les mégots.
+                      <br>1 mégot par terre = 1 an de ban (ou un truc du genre hein)
+                  </div>
+              </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION : SAFE ZONE / FORMATIONS -->
+      <section class="section">
+        <div class="max-w">
+          <div class="section-header reveal">
+            <div class="section-kicker">Sécurité & prévention</div>
+            <h2 class="section-title">Former tôt, afficher bien, rassurer</h2>
+            <p class="section-subtitle">Un Pic safe c’est aussi un Pic mieux.</p>
+          </div>
+
+          <div class="safezone-panel reveal" data-parallax="0.02">
+            <div class="safezone-top">
+              <div>
+                <div class="safezone-title">🛟 Safe zone</div>
+                <div style="opacity:0.72; margin-top:0.1rem;">Un cadre clair + des gestes simples.</div>
+              </div>
+              <div class="safezone-badge">Stop VSS • prévention • signa • Lettre = 7:c</div>
+            </div>
+
+            <div class="safezone-grid">
+              <div class="safezone-card">
+                <div class="project-title">🧑‍⚕️ Formations (réserver les dates en avance)</div>
+                <div class="project-text">
+                  PSC1 / gestes qui sauvent, formation alcool, formation VSS :
+                  on s’y prend tôt pour éviter de faire ça en milieu de semestre.
+                </div>
+                <div style="height: 10px;"></div>
+                <div class="pill-row">
+                  <span class="pill rse-pill">PSC1</span>
+                  <span class="pill rse-pill">Gestes qui sauvent</span>
+                  <span class="pill rse-pill">Alcool</span>
+                  <span class="pill rse-pill">VSS</span>
+                </div>
+              </div>
+
+              <div class="safezone-card">
+                <div class="project-title">📣 Signa / Com Safe zone</div>
+                <div class="project-text">
+                  Re-travailler la signa pour la safe-zone et le numéro Stop VSS lors des soirées (peu ou pas visible, peu faire bien mieux).
+                  Simple & visible.
+                </div>
+                <div style="height: 10px;"></div>
+                <div class="project-card" style="margin:0; background: rgba(16,185,129,0.06); border-color: rgba(16,185,129,0.18);">
+                  <div class="project-meta">Toujours la même</div>
+                  <div class="project-text">Mieux vaut prévenir que guérir.</div>
+                </div>
+              </div>
+            </div>
+              <p class="badge-box-hint reveal" style="margin-bottom: 1rem;">
+                  Le but : que chacun se sente à l’aise — et que l’équipe sache quoi faire en cas de problème.
+              </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION : PROJETS À CONTINUER -->
+      <section class="section">
+        <div class="max-w">
+          <div class="section-header reveal">
+            <div class="section-kicker">Projet à continuer</div>
+            <h2 class="section-title">On garde le cap</h2>
+            <p class="section-subtitle">La RSE, c’est aussi l’amélioration continue.</p>
+          </div>
+
+          <div class="projects-list">
+            <div class="project-card reveal">
+              <div class="project-title">♻️ Revalorisation des déchets : continuer fort</div>
+              <div class="project-meta">tri • filières • habitudes</div>
+              <div class="project-text">
+                On continue la revalorisation : clarifier les bacs, rendre le geste simple
+                et suivre ce qui marche. (ex: Cannettes à travailler)
+              </div>
+            </div>
+
+            <div class="project-card reveal">
+              <div class="project-title">🧾 Bilan d’améliorations du Pic</div>
+              <div class="project-meta">retours • priorités • actions</div>
+              <div class="project-text">
+                Un bon gros bilan 1x / an : ce qui va, ce qui bloque et les prochaines actions (en RSE évidement - bah oui gros nigaud).
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div class="max-w footer-inner">
+          The Amazing Picasso — RSE ·
+          <span><a href="../index.html#top">Retour à l’accueil</a> pour explorer les autres axes.</span>
+        </div>
+      </footer>
+
+    </main>
+  </div>
+
+  <script>
+    // RSE background parallax (subtil) + tilt cartes signa
+    (function () {
+      const bg = document.querySelector('.rse-bg');
+      if (!bg) return;
+
+      let raf = null;
+      let targetX = 0;
+      let targetY = 0;
+      let targetLeafY = 0;
+      let currentX = 0;
+      let currentY = 0;
+      let currentLeafY = 0;
+
+      const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+      const lerp = (a, b, t) => a + (b - a) * t;
+
+      const leafLayer = bg.querySelector('.leaf-layer');
+
+      const updateTargets = () => {
+        const y = window.scrollY || window.pageYOffset || 0;
+
+        // Pattern points: léger mouvement
+        targetY = clamp(-y * 0.06, -240, 240);
+
+        // mini drift horizontal
+        const drift = Math.sin(y * 0.002);
+        targetX = drift * 22;
+
+        // leaves: un peu plus profond
+        targetLeafY = clamp(-y * 0.10, -380, 380);
+      };
+
+      const tick = () => {
+        currentX = lerp(currentX, targetX, 0.10);
+        currentY = lerp(currentY, targetY, 0.10);
+        currentLeafY = lerp(currentLeafY, targetLeafY, 0.10);
+
+        bg.style.setProperty('--rse-x', `${currentX}px`);
+        bg.style.setProperty('--rse-y', `${currentY}px`);
+        if (leafLayer) leafLayer.style.setProperty('--leaf-y', `${currentLeafY}px`);
+
+        raf = requestAnimationFrame(tick);
+      };
+
+      const onScroll = () => {
+        updateTargets();
+        if (raf == null) raf = requestAnimationFrame(tick);
+      };
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      updateTargets();
+      raf = requestAnimationFrame(tick);
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          if (raf != null) cancelAnimationFrame(raf);
+          raf = null;
+        } else {
+          updateTargets();
+          if (raf == null) raf = requestAnimationFrame(tick);
+        }
+      });
+    })();
+
+    (function () {
+      const cards = document.querySelectorAll('[data-tilt-card]');
+      if (!cards.length) return;
+
+      const isPointerFine = window.matchMedia('(pointer: fine)').matches;
+      if (!isPointerFine) return;
+
+      const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+      cards.forEach((card) => {
+        const inner = card.querySelector('.signa-card-inner');
+        if (!inner) return;
+
+        const max = 10;
+
+        const onMove = (e) => {
+          const rect = card.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+
+          const nx = (e.clientX - cx) / (rect.width * 0.8);
+          const ny = (e.clientY - cy) / (rect.height * 0.8);
+
+          const ry = clamp(nx, -1, 1) * max;
+          const rx = clamp(-ny, -1, 1) * max;
+
+          inner.style.setProperty('--rx', `${rx}deg`);
+          inner.style.setProperty('--ry', `${ry}deg`);
+        };
+
+        const onLeave = () => {
+          inner.style.setProperty('--rx', `0deg`);
+          inner.style.setProperty('--ry', `0deg`);
+        };
+
+        card.addEventListener('mousemove', onMove, { passive: true });
+        card.addEventListener('mouseleave', onLeave, { passive: true });
+      });
+    })();
+  </script>
+
+  <script src="../script.js"></script>
+</body>
+</html>

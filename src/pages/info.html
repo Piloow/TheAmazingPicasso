@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>The Amazing Picasso – Info</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <style>
+    /* ===== INFO page unique style: Matrix / retro OS / web terminal ===== */
+
+    /* Subtle dark tech overlay without breaking global background */
+    body.info-tech {
+      position: relative;
+    }
+
+    .matrix-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.35;
+      mix-blend-mode: multiply;
+      filter: contrast(1.05) saturate(1.05);
+    }
+
+    .matrix-bg canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Scanlines + vignette */
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(17, 24, 39, 0.00),
+          rgba(17, 24, 39, 0.00) 3px,
+          rgba(17, 24, 39, 0.05) 4px
+        );
+      opacity: 0.55;
+    }
+
+    .vignette {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background: radial-gradient(circle at center, rgba(0,0,0,0.0) 40%, rgba(17,24,39,0.16) 100%);
+    }
+
+    /* Keep content above fx (and keep the global fixed header behavior) */
+    .page > header {
+      /* IMPORTANT: do not override the global fixed header */
+      position: fixed !important;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 120;
+    }
+
+    /* Content stays above FX layers, below the header */
+    .page > main {
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Hero chip look */
+    .tech-chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      justify-content: center;
+      margin-top: 1.1rem;
+    }
+
+    .tech-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.45rem 0.7rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.80);
+      border: 1px solid rgba(17, 24, 39, 0.12);
+      box-shadow: 0 16px 40px rgba(17,24,39,0.08);
+      font-weight: 800;
+      color: rgba(17, 24, 39, 0.78);
+    }
+
+    .tech-chip .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(16,185,129,0.65);
+      box-shadow: 0 0 0 6px rgba(16,185,129,0.10);
+    }
+
+    /* Windows-like panels */
+    .win-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      gap: 1.8rem;
+      align-items: start;
+    }
+
+    @media (max-width: 980px) {
+      .win-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .win-panel {
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(17,24,39,0.14);
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: 0 18px 55px rgba(17,24,39,0.10);
+    }
+
+    .win-titlebar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid rgba(17,24,39,0.10);
+      background: linear-gradient(120deg, rgba(16,185,129,0.16), rgba(99,102,241,0.10), rgba(236,72,153,0.10));
+    }
+
+    .win-title {
+      font-weight: 900;
+      letter-spacing: -0.01em;
+      color: rgba(17, 24, 39, 0.82);
+    }
+
+    .win-dots {
+      display: flex;
+      gap: 0.45rem;
+      align-items: center;
+    }
+
+    .win-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(17,24,39,0.12);
+      background: rgba(255,255,255,0.65);
+    }
+
+    .win-dot.red { background: rgba(244,63,94,0.55); }
+    .win-dot.yellow { background: rgba(245,158,11,0.55); }
+    .win-dot.green { background: rgba(34,197,94,0.55); }
+
+    .win-body {
+      padding: 1rem 1.1rem 1.15rem;
+    }
+
+    /* Terminal block */
+    .terminal {
+      border-radius: 16px;
+      background: rgba(17, 24, 39, 0.90);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 22px 70px rgba(0, 0, 0, 0.25);
+      overflow: hidden;
+    }
+
+    .terminal-top {
+      padding: 0.75rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      background: rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+    }
+
+    .terminal-top .label {
+      color: rgba(255,255,255,0.78);
+      font-weight: 800;
+      font-size: 0.95rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .terminal-body {
+      padding: 0.95rem 1rem 1.05rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      color: rgba(167, 243, 208, 0.92);
+      font-size: 0.95rem;
+      line-height: 1.55;
+    }
+
+    .terminal-body .cmd {
+      color: rgba(52, 211, 153, 0.95);
+      font-weight: 700;
+    }
+
+    .terminal-body .muted {
+      color: rgba(167, 243, 208, 0.65);
+    }
+
+    .terminal-body .warn {
+      color: rgba(251, 191, 36, 0.95);
+      font-weight: 700;
+    }
+
+    /* Make some cards feel “wired” */
+    .wired-card {
+      background: rgba(255,255,255,0.80);
+      border: 1px solid rgba(17,24,39,0.14);
+      box-shadow: 0 18px 55px rgba(17,24,39,0.10);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .wired-head {
+      padding: 0.85rem 1.05rem;
+      border-bottom: 1px solid rgba(17,24,39,0.10);
+      background: radial-gradient(circle at top left, rgba(34,197,94,0.14), rgba(99,102,241,0.08), rgba(255,255,255,0.0) 70%);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .wired-head strong {
+      font-size: 1.15rem;
+    }
+
+    .wired-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.35rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid rgba(17,24,39,0.12);
+      background: rgba(255,255,255,0.70);
+      font-weight: 900;
+      font-size: 0.9rem;
+      color: rgba(17,24,39,0.75);
+    }
+
+    .wired-body {
+      padding: 1rem 1.05rem 1.1rem;
+    }
+
+    /* Slightly different project list on this page */
+    .projects-list.tech {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.1rem;
+    }
+
+    @media (max-width: 900px) {
+      .projects-list.tech {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+  </style>
+</head>
+
+<body id="top" class="info-tech">
+<div class="page">
+
+  <!-- Matrix + scanlines -->
+  <div class="matrix-bg" aria-hidden="true">
+    <canvas id="matrixCanvas"></canvas>
+  </div>
+  <div class="scanlines" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <!-- HEADER -->
+    <header class="site-header">
+        <div class="site-header-inner">
+            <div class="header-bar max-w">
+
+                <!-- NAV GAUCHE -->
+                <nav class="site-nav site-nav-left">
+                    <a href="animation.html">Animation</a>
+                    <a href="appro.html">Appro</a>
+                    <a href="com.html">Com</a>
+                    <a href="estu.html">Estu</a>
+                </nav>
+
+                <!-- LOGO CENTRÉ -->
+                <div class="logo-container">
+                    <a href="../index.html#top" class="logo-link">
+                        <img
+                                src="../../assets/TheAmazingPicasso.png"
+                                alt="The Amazing Picasso"
+                                class="logo-image"
+                        />
+                    </a>
+                </div>
+
+                <!-- NAV DROITE -->
+                <nav class="site-nav site-nav-right">
+                    <a href="info.html">Info</a>
+                    <a href="locaux.html">Locaux</a>
+                    <a href="rse.html">RSE</a>
+                    <a href="treso.html">Tréso</a>
+                </nav>
+
+            </div>
+        </div>
+    </header>
+
+  <main>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="max-w hero-inner reveal" data-parallax="0.02">
+        <div class="hero-kicker">Axes du projet</div>
+        <h1 class="hero-title">
+          Info<br />
+          <span>outils, data et workflow.</span>
+        </h1>
+        <p class="hero-subtitle">
+          Des outils pour l’équipe, on rend les données lisibles et exploitables et on gagne du temps.
+          Objectif : <strong>moins de charge mentale</strong> pour l'équipe + <strong>plus de continuité</strong> entre semestres.
+        </p>
+
+        <div class="tech-chip-row" aria-hidden="true">
+          <span class="tech-chip"><span class="dot"></span>Inventaire</span>
+          <span class="tech-chip"><span class="dot"></span>BI / dashboard</span>
+          <span class="tech-chip"><span class="dot"></span>App</span>
+          <span class="tech-chip"><span class="dot"></span>Docs & signatures</span>
+          <span class="tech-chip"><span class="dot"></span>GitLab</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: "tableau de bord" + terminal -->
+    <section class="section">
+      <div class="max-w">
+        <div class="section-header reveal">
+          <div class="section-kicker">Vision</div>
+          <h2 class="section-title">Des outils pour piloter le Pic</h2>
+          <p class="section-subtitle">
+            Rendre les décisions / suivis faciles
+            (stocks, ventes, pertes, appro, planning).
+          </p>
+        </div>
+
+        <div class="win-grid">
+
+          <div class="win-panel reveal">
+            <div class="win-titlebar">
+              <div class="win-title">Dashboard Pic</div>
+              <div class="win-dots" aria-hidden="true">
+                <span class="win-dot red"></span>
+                <span class="win-dot yellow"></span>
+                <span class="win-dot green"></span>
+              </div>
+            </div>
+            <div class="win-body">
+              <div class="projects-list tech">
+                <div class="project-card" style="margin:0;">
+                  <div class="project-title">📦 Inventaire (Appro × Tréso)</div>
+                  <div class="project-meta">stocks • alertes • traçabilité</div>
+                  <div class="project-text">
+                    Toujours + d’outils pour suivre les entrées/sorties (soft + bière), les niveaux critiques
+                    et garder un historique propre.
+                  </div>
+                </div>
+
+                <div class="project-card" style="margin:0;">
+                  <div class="project-title">📊 Rapport BI (utile, pas lourd)</div>
+                  <div class="project-meta">tendances • pertes • best-sellers</div>
+                  <div class="project-text">
+                    Un dashboard qui répond aux questions simples : “qu’est-ce qui part ?”, “qu’est-ce qui stagne ?”,
+                    “où on perd ?”, “quel impact d’une nouveauté ?”.
+                  </div>
+                </div>
+
+                <div class="project-card" style="margin:0;">
+                  <div class="project-title">📱 L’application</div>
+                  <div class="project-meta">perms • calendrier • infos</div>
+                  <div class="project-text">
+                    Bon bah là je sais un peu de quoi je parle. L’app sera super pour ajouter de nouvelles fonctionnalités (ex: remplissage de l'inventaire via l'app).
+                  </div>
+                </div>
+
+                <div class="project-card" style="margin:0;">
+                  <div class="project-title">📝 Docs à signer à l’inscription</div>
+                  <div class="project-meta">règlement • RGPD • charte</div>
+                  <div class="project-text">
+                    Règlement du Pic + documents (ex: charte RGPD, conso alcool…)
+                    soient signés directement par les étudiants à l'inscription.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <aside class="reveal" data-parallax="0.02">
+            <div class="terminal">
+              <div class="terminal-top">
+                <div class="label">Console / workflow</div>
+                <div style="opacity:0.65; color: rgba(255,255,255,0.8); font-weight: 800;">pic@utc:~</div>
+              </div>
+              <div class="terminal-body">
+                <div><span class="cmd">$</span> status --semestre</div>
+                <div class="muted">→ stocks OK · planning perms OK · docs à signer: 3</div>
+                <div style="height: 10px;"></div>
+
+                <div><span class="cmd">$</span> dashboard --quick</div>
+                <div class="muted">→ top boissons: Jupiler, Coca, …</div>
+                <div class="muted">→ <span class="warn">alert</span>: canettes basses · fût à commander</div>
+                <div style="height: 10px;"></div>
+
+                <div><span class="cmd">$</span> git remote -v</div>
+                <div class="muted">→ github? gitlab? <span class="warn">à trancher</span> 😄</div>
+                  <div style="height: 10px;"></div>
+
+                  <div><span class="cmd">$</span> lettre --reveal</div>
+                  <div class="muted">→ lettre = <span class="warn">5:P</span></div>
+              </div>
+            </div>
+          </aside>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: Améliorations / Nouveautés (style “wired cards”) -->
+    <section class="section">
+      <div class="max-w">
+        <div class="section-header reveal">
+          <div class="section-kicker">Améliorations / Nouveautés</div>
+          <h2 class="section-title">À mettre en place</h2>
+          <p class="section-subtitle">Des ajouts qui rendent l’orga plus fluide… sans transformer le Pic en startup.</p>
+        </div>
+
+        <div class="wired-card reveal">
+          <div class="wired-head">
+            <strong>🧩 “Tooling” inventaire</strong>
+            <span class="wired-badge">Appro × Tréso</span>
+          </div>
+          <div class="wired-body">
+            <p style="margin-bottom: 0.7rem; color: rgba(17,24,39,0.78);">
+              Continuer à industrialiser le suivi : inventaire clair, alertes et un historique propre.
+              L’objectif : réduire les erreurs et faciliter la passation.
+            </p>
+            <div class="pill-row">
+              <span class="pill">entrées/sorties</span>
+              <span class="pill">niveaux critiques</span>
+              <span class="pill">périmés</span>
+              <span class="pill">pertes</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="height: 1.2rem;"></div>
+
+        <div class="wired-card reveal">
+          <div class="wired-head">
+            <strong>📊 Rapport BI</strong>
+            <span class="wired-badge">Decision-ready</span>
+          </div>
+          <div class="wired-body">
+            <p style="margin-bottom: 0.7rem; color: rgba(17,24,39,0.78);">
+              Un petit dashboard qui aide à décider : ce qui tourne, ce qui ne tourne pas
+              et l’impact des nouveautés / soirées thématiques.
+            </p>
+            <div class="pill-row">
+              <span class="pill">top ventes</span>
+              <span class="pill">tendances</span>
+              <span class="pill">comparaison</span>
+              <span class="pill">indicateurs</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="height: 1.2rem;"></div>
+
+        <div class="wired-card reveal">
+          <div class="wired-head">
+            <strong>📝 Docs & signatures à l’inscription</strong>
+            <span class="wired-badge">cadre</span>
+          </div>
+          <div class="wired-body">
+            <p style="margin-bottom: 0.7rem; color: rgba(17,24,39,0.78);">
+              Règlement du Pic (et autres docs : charte RGPD, charte conso alcool, etc.) à signer
+              directement à l’inscription : c’est plus clair pour tout le monde.
+            </p>
+            <div class="pill-row">
+              <span class="pill">règlement</span>
+              <span class="pill">RGPD</span>
+              <span class="pill">signature</span>
+              <span class="pill">archivage</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION: Projets à continuer (style: web page / cards) -->
+    <section class="section">
+      <div class="max-w">
+        <div class="section-header reveal">
+          <div class="section-kicker">Projets à continuer</div>
+          <h2 class="section-title">Ce qui mérite d’être relancé</h2>
+          <p class="section-subtitle">Du fun + du feedback utilisateur, sans noyer la team.</p>
+        </div>
+
+        <div class="projects-list">
+          <div class="project-card reveal">
+            <div class="project-title">📺 Visus interactifs sur les télés</div>
+            <div class="project-meta">sondages • feedback • engagement</div>
+            <div class="project-text">
+              Relancer des mini-sondages selon la conso : “On teste 3 bières ce soir, laquelle on garde ?”
+              → ça transforme les clients en co-décideurs.
+            </div>
+          </div>
+
+          <div class="project-card reveal">
+            <div class="project-title">💚 Vous êtes super l’info</div>
+            <div class="project-meta">support • bonne vibes</div>
+            <div class="project-text">
+              Gros Big Up mes OG de la team info !
+            </div>
+          </div>
+
+          <div class="project-card reveal">
+            <div class="project-title">🧠 GitLab : on y va ?</div>
+            <div class="project-meta">issues • MR • historique</div>
+            <div class="project-text">
+              Passer sur GitLab ? Chais pas en vrai c'est mieux et on à le GitLab UTC.
+                <br>Oui oui ce site est hébergé avec GitHub
+            </div>
+          </div>
+
+            <div class="project-card reveal">
+                <div class="project-title">↩️ Les rédirections</div>
+                <div class="project-meta">pérennité • transmission</div>
+                <div class="project-text">
+                    Plus / pas de redirection sur certaines boites des teams (Info, artistes, com, estu...). Ça parait bête, mais je vous jure que c'est important de remettre les rédirections vers la boite présidence !
+                </div>
+            </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="max-w footer-inner">
+        The Amazing Picasso — Info ·
+        <span><a href="../index.html#top">Retour à l’accueil</a> pour explorer les autres axes.</span>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+  // Lightweight Matrix background (respects reduced motion)
+  (function () {
+    const canvas = document.getElementById('matrixCanvas');
+    if (!canvas) return;
+
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let w = 0;
+    let h = 0;
+    let raf = null;
+
+    const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789';
+    const glyphs = chars.split('');
+
+    let fontSize = 16;
+    let columns = 0;
+    let drops = [];
+
+    function resize() {
+      const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      w = Math.floor(window.innerWidth * dpr);
+      h = Math.floor(window.innerHeight * dpr);
+      canvas.width = w;
+      canvas.height = h;
+      canvas.style.width = '100%';
+      canvas.style.height = '100%';
+
+      fontSize = Math.round(16 * dpr);
+      columns = Math.floor(w / fontSize);
+      drops = new Array(columns).fill(0).map(() => Math.random() * -40);
+
+      ctx.font = `${fontSize}px ui-monospace, Menlo, Monaco, Consolas, monospace`;
+    }
+
+    function tick() {
+      // fade
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+      ctx.fillRect(0, 0, w, h);
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = glyphs[(Math.random() * glyphs.length) | 0];
+        const x = i * fontSize;
+        const y = drops[i] * fontSize;
+
+        // green with subtle variation
+        ctx.fillStyle = `rgba(16, 185, 129, ${0.20 + Math.random() * 0.22})`;
+        ctx.fillText(text, x, y);
+
+        // reset drop
+        if (y > h && Math.random() > 0.975) drops[i] = Math.random() * -30;
+        drops[i] += 0.55 + Math.random() * 0.25;
+      }
+
+      raf = requestAnimationFrame(tick);
+    }
+
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+
+    raf = requestAnimationFrame(tick);
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        if (raf) cancelAnimationFrame(raf);
+        raf = null;
+      } else {
+        if (!raf) raf = requestAnimationFrame(tick);
+      }
+    });
+  })();
+</script>
+
+<script src="../script.js"></script>
+</body>
+</html>

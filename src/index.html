@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>The Amazing Picasso – Candidature</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body id="top">
+<!-- MODAL FOCUS BADGE -->
+<div class="badge-modal" id="badgeModal" aria-hidden="true">
+    <div class="badge-modal-backdrop" data-badge-close></div>
+
+    <div class="badge-modal-panel" role="dialog" aria-modal="true" aria-labelledby="badgeModalTitle">
+        <button class="badge-modal-close" type="button" aria-label="Fermer" data-badge-close>✕</button>
+
+        <div class="badge-modal-content">
+            <div class="badge-modal-badge">
+                <div class="badge-hero" id="badgeHero">
+                    <img id="badgeHeroImg" src="" alt="" />
+                    <div class="badge-hero-shine" aria-hidden="true"></div>
+                </div>
+            </div>
+
+            <div class="badge-modal-info">
+                <div class="badge-modal-kicker">Badge</div>
+                <h3 class="badge-modal-title" id="badgeModalTitle">—</h3>
+
+                <ul class="badge-modal-meta">
+                    <li><span>Semestre</span><strong id="badgeMetaSemester">—</strong></li>
+                    <li><span>Poste</span><strong id="badgeMetaRole">—</strong></li>
+                </ul>
+
+                <p class="badge-modal-desc" id="badgeMetaDesc">—</p>
+                <div class="badge-modal-actions">
+                    <button class="badge-modal-variant" id="badgeVariantBtn" type="button" hidden>
+                        Variante
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="page">
+    <!-- HEADER avec logo qui se réduit -->
+    <header class="site-header">
+        <div class="site-header-inner">
+            <div class="header-bar max-w">
+
+                <!-- NAV GAUCHE -->
+                <nav class="site-nav site-nav-left">
+                    <a href="pages/animation.html">Animation</a>
+                    <a href="pages/appro.html">Appro</a>
+                    <a href="pages/com.html">Com</a>
+                    <a href="pages/estu.html">Estu</a>
+                </nav>
+
+                <!-- LOGO CENTRÉ -->
+                <div class="logo-container">
+                    <a href="#top" class="logo-link">
+                        <img
+                                src="../assets/TheAmazingPicasso.png"
+                                alt="The Amazing Picasso"
+                                class="logo-image"
+                        />
+                    </a>
+                </div>
+
+                <!-- NAV DROITE -->
+                <nav class="site-nav site-nav-right">
+                    <a href="pages/info.html">Info</a>
+                    <a href="pages/locaux.html">Locaux</a>
+                    <a href="pages/rse.html">RSE</a>
+                    <a href="pages/treso.html">Tréso</a>
+                </nav>
+
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- HERO -->
+        <section class="hero">
+            <div class="max-w hero-inner reveal" data-parallax="0.03">
+                <div class="hero-kicker">When the dream never gets old</div>
+                <h1 class="hero-title">
+                    Une vision claire pour le foyer,<br />
+                    <span>portée par une équipe structurée.</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Bienvenue dans The Amazing Picasso, <br>le rêve d'un Pic où tout est réalisable.
+                    <br>Venez, entrez et profitez de cette visite <br>dans une utopie idéologique.
+                </p>
+            </div>
+        </section>
+
+        <!-- PRÉSENTATION RAPIDE CANDIDATURE -->
+        <section class="section section-intro">
+            <div class="max-w">
+                <div class="section-header reveal">
+                    <div class="section-kicker">Présentation</div>
+                    <h2 class="section-title">The Amazing Picasso, c’est quoi ?</h2>
+                    <p class="section-subtitle">
+                        Une vision qui cherche à rendre le Picasso plus lisible,
+                        plus fluide pour l’équipe et encore plus agréable pour les
+                        étudiant·e·s. L’idée : garder le côté fun du foyer, tout en
+                        mettant de l’ordre derrière le bar (c'est une image - mais le bar mérite surement un bon coup de torchon).
+                    </p>
+                </div>
+
+                <div class="intro-layout">
+                    <div class="intro-block reveal" data-parallax="0.02">
+                        <h3 class="intro-title">Une vision simple</h3>
+                        <p class="intro-text">
+                            Organiser le Picasso comme un vrai lieu de vie :
+                            des temps forts, des outils qui simplifient la gestion,
+                            une communication claire et réfléchie pour toucher le plus grand nombre et que tout le monde se sente à l'aise, chez soit.
+                        </p>
+                    </div>
+                    <div class="intro-block intro-block-highlight reveal" data-parallax="0.02">
+                        <h3 class="intro-title">Trois priorités</h3>
+                        <ul class="intro-list">
+                            <li><span>Responsabilisation :</span> de l'équipe comme des étudiant·e·s sur le travail et les comportements.</li>
+                            <li><span>Inclusivité :</span> du plus grand nombre. Pour que chacun·e ait ça place ou puisse la trouver</li>
+                            <li><span>Transmission :</span> un foyer qui s’améliore et facilite les passations.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- À PROPOS DE MOI -->
+        <section class="section section-about">
+            <div class="max-w">
+                <div class="section-header reveal">
+                    <div class="section-kicker">À propos</div>
+                    <h2 class="section-title">Qui se cache derrière The Amazing Picasso ?</h2>
+                    <p class="section-subtitle">
+                        C'est une idéologie, mais c’est aussi une personne.
+                    </p>
+                </div>
+
+                <div class="profile-layout">
+                    <!-- Colonne texte -->
+                    <div class="profile-left">
+                        <div class="profile-card-text reveal">
+                            <h3 class="profile-title">Pol Discart</h3>
+                            <p class="profile-tagline">
+                                Mal de dos chronique. Le belge préféré de ton brasseur préféré. Alternant par intermittence.
+                            </p>
+
+                            <ul class="profile-infos">
+                                <li><span>Nom</span><strong>Discart</strong></li>
+                                <li><span>Prénom</span><strong>Pol</strong></li>
+                                <li><span>Semestre</span><strong>GI07</strong></li>
+                                <li><span>Âge</span><strong>23 ans</strong></li>
+                                <li><span>Taille</span><strong>1.80 m</strong></li>
+                            </ul>
+
+                            <p class="profile-extra">
+                                Dette de sommeil à cause de ce site de con.
+                                <br><br><i>Disclaimer: Tous les design ou médias présents sur site ont été réalisés par mes soins sans recourir à l'Intélligence Artificielle (crédit: les logos d'associations utilisées ont été réalisés par des personnes tierces). L'intelligence artificielle à été utilisé mais son usage s'est limité à de l'aide sur la mise en page (CSS).</i>
+                            </p>
+                        </div>
+
+                        <div class="profile-chips reveal">
+                            <span class="pill">Edit Pouf</span>
+                            <span class="pill">Sour & Lambic</span>
+                            <span class="pill">Un vrai petit nerd celui là</span>
+                            <span class="pill">Kakou kakou</span>
+                        </div>
+                    </div>
+
+                    <!-- Colonne photo -->
+                    <div class="profile-right">
+                        <div class="profile-photo-card reveal" data-parallax="0.04">
+                            <div class="profile-photo-frame">
+                                <!-- Mets ici ta vraie photo -->
+                                <img
+                                        src="../assets/pol.JPG"
+                                        alt="Photo de Pol Discart"
+                                        class="profile-photo"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BOÎTE À BADGES / CV ASSO PIXEL ART -->
+        <section class="section section-badges">
+            <div class="max-w">
+                <div class="section-header reveal">
+                    <div class="section-kicker">CV associatif</div>
+                    <h2 class="section-title">Ma boîte à badges</h2>
+                    <p class="section-subtitle">
+                        Tout au long de mon parcours associatif à l'UTC j'ai eu l'immense honneur de collecter moult badges attendants de ma bravoure.<br>Liste évidement non-exhaustive, je vais pas m'amuser à créer des badges en pixel pour tout non plus je veux dormir svp.
+                    </p>
+                </div>
+
+                <div class="badge-box-wrapper reveal" data-parallax="0.02">
+                    <div class="badge-case-toggle" role="button" tabindex="0" aria-expanded="false">
+                        <span class="badge-case-toggle-hint">Clique pour ouvrir / fermer</span>
+
+                        <div class="badge-case" data-open="false">
+                            <!-- Image fermée -->
+                            <img class="badge-case-img badge-case-img-closed"
+                                 src="../assets/BadgeCaseBoxClose.png"
+                                 alt="Boîte à badges (fermée)" />
+
+                            <!-- Image ouverte -->
+                            <img class="badge-case-img badge-case-img-open"
+                                 src="../assets/BadgeCaseBoxOpen.png"
+                                 alt="Boîte à badges (ouverte)" />
+
+                            <!-- Slots (12) -->
+                            <div class="badge-slots" aria-hidden="true">
+
+                                <button class="badge-slot" type="button" data-badge
+                                        data-title="Integ Fev"
+                                        data-semester="P23"
+                                        data-role="Team WEI"
+                                        data-desc="Bonus Mascotte Duri">
+                                    <img src="../assets/badges/BadgeIntegFev.png" alt="BadgeIntegFev" />
+                                </button>
+
+                                <button class="badge-slot" type="button" data-badge
+                                        data-title="Integration"
+                                        data-semester="P23"
+                                        data-role="Team Info"
+                                        data-desc="Je vous jure j'ai fait Bip bip boup à fond">
+                                    <img src="../assets/badges/BadgeInteg.png" alt="BadgeInteg" />
+                                </button>
+
+                                <button class="badge-slot" type="button" data-badge
+                                        data-title="Picasso"
+                                        data-semester="P23"
+                                        data-role="Team Info"
+                                        data-desc="Je vous jure j'ai fait Bip bip boup à fond fond fond">
+                                    <img src="../assets/badges/BadgePicP23.png" alt="BadgePicP23" />
+                                </button>
+
+                                <button class="badge-slot" type="button" data-badge
+                                        data-title="Nasa"
+                                        data-semester="A23"
+                                        data-role="Co-Président"
+                                        data-desc="La belle époque, c'était cool pas vrai la team ?">
+                                    <img src="../assets/badges/BadgeNasaA23.png" alt="BadgeNasaA23" />
+                                </button>
+
+                                <button class="badge-slot" type="button" data-badge
+                                        data-title="Picasso"
+                                        data-semester="A23"
+                                        data-role="Appro Binch"
+                                        data-desc="Finit les grosses brasseries, tchao Val Dieu bonjour LBF, Carolus et compagnie...">
+                                    <img src="../assets/badges/BadgePicA23.png" alt="BadgePicA23" />
+                                </button>
+
+                                <button class="badge-slot" type="button" data-badge
+                                        data-title="FSC"
+                                        data-semester="A23 - A25"
+                                        data-role="DJ Pro Max"
+                                        data-desc="Palmares : 1 set de publié sur les plateformes en presque 3 ans de DJ pas foufou ça">
+                                    <img src="../assets/badges/BadgeFSC.png" alt="BadgeFSC" />
+                                </button>
+
+                                <button class="badge-slot" type="button" data-badge
+                                        data-title="Etuville"
+                                        data-semester="P24"
+                                        data-role="Resp Bar"
+                                        data-desc="Royal au bar comme on dit">
+                                    <img src="../assets/badges/BadgeGalaP24.png" alt="BadgeGalaP24" />
+                                </button>
+
+                                <button class="badge-slot" type="button" data-badge
+                                        data-title="Record Battut"
+                                        data-semester="P24 - A25"
+                                        data-role="Président Intérimaire"
+                                        data-desc="Le site arrive je vous jure (abonnez vous à @Record.Battut sur Insta)">
+                                    <img src="../assets/badges/BadgeRB01.png" alt="BadgeRB01" />
+                                </button>
+
+                                <button class="badge-slot" type="button" data-badge
+                                        data-title="Picasso"
+                                        data-semester="A24"
+                                        data-role="Co-Président"
+                                        data-desc="YEEEEHAAAAA pic">
+                                    <img src="../assets/badges/BadgePicA24.png" alt="BadgePicA24" />
+                                </button>
+
+                                <button class="badge-slot" type="button" data-badge
+                                        data-title="Nasa"
+                                        data-semester="A24"
+                                        data-role="Secrétaire Général"
+                                        data-desc="Moins bien que A23 (logique), mais pas mal non plus">
+                                    <img src="../assets/badges/BadgeNasaA24.png" alt="BadgeNasaA24" />
+                                </button>
+
+                                <button class="badge-slot" type="button" data-badge
+                                        data-title="Picasso"
+                                        data-semester="P25"
+                                        data-role="Resp Estu"
+                                        data-desc="DISC'ESTUUUU YOUHOUUUU (Vous avez vu ma boule disco de 1m50 ou quoi ?)"
+                                        data-variant-src="../assets/badges/BadgeEstu.png"
+                                        data-variant-label="Variante">
+                                    <img src="../assets/badges/BadgePicP25.png" alt="BadgePicP25" />
+                                </button>
+
+                                <button class="badge-slot" type="button" data-badge
+                                        data-title="Etuvile"
+                                        data-semester="P25"
+                                        data-role="Team Bar"
+                                        data-desc="Promis j'arrête l'alcool après ça">
+                                    <img src="../assets/badges/BadgeGalaP25.png" alt="BadgeGalaP25" />
+                                </button>
+
+                                <button class="badge-slot" type="button" data-badge
+                                        data-title="PVDC"
+                                        data-semester="P25 - A25"
+                                        data-role="Président"
+                                        data-desc="J'ai rendu l'argent">
+                                    <img src="../assets/badges/BadgePVDC.png" alt="BadgePVDC" />
+                                </button>
+
+                                <button class="badge-slot" type="button" data-badge
+                                        data-title="Picasso"
+                                        data-semester="A25"
+                                        data-role="Co-Président"
+                                        data-desc="L'équipe la plus motivée jamais vue, meilleur semestre">
+                                    <img src="../assets/badges/BadgePicA25.png" alt="BadgePicA25" />
+                                </button>
+
+                                <button class="badge-slot" type="button" data-badge
+                                        data-title="Etuville"
+                                        data-semester="P26"
+                                        data-role="Secrétaire Général"
+                                        data-desc="J'avoue je sais pas trop ce que je fais ici, mais en tout cas je prend des super CR !">
+                                    <img src="../assets/badges/BadgeGalaP26.png" alt="BadgeGalaP26" />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="badge-box-hint">
+                        Badges chronologiques : clique sur un badge pour voir les infos (semestre, poste, etc.).
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CARTES D'ACCUEIL / AXES DU PROJET -->
+        <section class="section-cards">
+            <div class="max-w">
+                <div class="section-header section-header-compact reveal">
+                    <div class="section-kicker">Axes du projet</div>
+                    <h2 class="section-title">Les grands piliers de The Amazing Picasso</h2>
+                    <p class="section-subtitle">
+                        Chaque carte correspond à un volet du projet. Clique pour voir
+                        les idées, les outils et la façon de les
+                        mettre en place.
+                    </p>
+                    <p class="hero-meta hero-inner">
+                        Explore une thématique pour découvrir les projets associés.
+                    </p>
+                </div>
+
+                <div class="cards-grid cards-grid-5">
+                    <!-- ANIMATION -->
+                    <a href="pages/animation.html" class="nav-card reveal">
+                        <div class="nav-card-label">Vie du foyer</div>
+                        <h2 class="nav-card-title">Animation</h2>
+                        <p class="nav-card-text">
+                            Une programmation
+                            régulière qui donne envie de passer au Pic.
+                            <br><br><br>
+                        </p>
+                        <div class="nav-card-arrow">Voir les projets →</div>
+                    </a>
+
+                    <!-- APPRO -->
+                    <a href="pages/appro.html" class="nav-card reveal">
+                        <div class="nav-card-label">Miam miam</div>
+                        <h2 class="nav-card-title">Appro</h2>
+                        <p class="nav-card-text">
+                            Approvisionnements, organisation et répartition pour le boire et le manger.
+                            <br><br>
+                        </p>
+                        <div class="nav-card-arrow">Voir les projets →</div>
+                    </a>
+
+                    <!-- COM -->
+                    <a href="pages/com.html" class="nav-card reveal">
+                        <div class="nav-card-label">KOMBUCHA</div>
+                        <h2 class="nav-card-title">Com</h2>
+                        <p class="nav-card-text">
+                            Des supports propres, une communication qui pense à tout le monde et de la diversité de contenu.
+                        </p>
+                        <div class="nav-card-arrow">Voir les projets →</div>
+                    </a>
+
+                    <!-- ESTU -->
+                    <a href="pages/estu.html" class="nav-card reveal">
+                        <div class="nav-card-label">DISC'ESTUUU</div>
+                        <h2 class="nav-card-title">Estu</h2>
+                        <p class="nav-card-text">
+                            Améliorer sans réinventer, rendre encore plus accueillant et bienveillant.
+                            <br><br>
+                        </p>
+                        <div class="nav-card-arrow">Voir les projets →</div>
+                    </a>
+
+                    <!-- INFO -->
+                    <a href="pages/info.html" class="nav-card reveal">
+                        <div class="nav-card-label">BIP BIP BOUP</div>
+                        <h2 class="nav-card-title">Info</h2>
+                        <p class="nav-card-text">
+                            Créer des outils utiles et necessaire au suivi et à la gestion du Pic. En restant simple pour l'équipe et les étudiant·e·s.
+                        </p>
+                        <div class="nav-card-arrow">Voir les projets →</div>
+                    </a>
+
+                    <!-- LOCAUX -->
+                    <a href="pages/locaux.html" class="nav-card reveal">
+                        <div class="nav-card-label">Espace</div>
+                        <h2 class="nav-card-title">Locaux</h2>
+                        <p class="nav-card-text">
+                            Améliorer le confort d'utilisation, la circulation, le matériel et la
+                            lisibilité / accessibilité du foyer au quotidien.
+                        </p>
+                        <div class="nav-card-arrow">Voir les projets →</div>
+                    </a>
+
+                    <!-- RSE -->
+                    <a href="pages/rse.html" class="nav-card reveal">
+                        <div class="nav-card-label">Responsabilité</div>
+                        <h2 class="nav-card-title">RSE</h2>
+                        <p class="nav-card-text">
+                            Sobriété, sécurité, accessibilité et respect du cadre : un
+                            foyer responsable, inclusif et toujours vivant.
+                        </p>
+                        <div class="nav-card-arrow">Voir les projets →</div>
+                    </a>
+
+                    <!-- TRESO -->
+                    <a href="pages/treso.html" class="nav-card reveal">
+                        <div class="nav-card-label">Moula</div>
+                        <h2 class="nav-card-title">Tréso</h2>
+                        <p class="nav-card-text">
+                            Suivi simple et transparent des finances : recettes, dépenses,
+                            organisation et procédures.
+                            <br><br>
+                        </p>
+                        <div class="nav-card-arrow">Voir les projets →</div>
+                    </a>
+
+                    <!-- TOOLBOX (VERROUILLÉE) -->
+                    <a href="pages/toolbox.html"
+                       class="nav-card nav-card-toolbox nav-card-locked reveal"
+                       data-locked="true">
+                        <div class="nav-card-label">Outils</div>
+                        <h2 class="nav-card-title">ToolBox ?</h2>
+                        <p class="nav-card-text">
+                            C'est quoi cette team de con ?
+                        </p>
+                        <br>
+                        <br>
+                        <br>
+                        <div class="nav-card-arrow">Voir les projets →</div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- PARCOURS ASSOCIATIF / CV -->
+        <section class="section section-cv">
+            <div class="max-w">
+                <div class="section-header reveal">
+                    <div class="section-kicker">Parcours associatif</div>
+                    <h2 class="section-title">Ce que j’ai déjà construit à l’UTC</h2>
+                    <p class="section-subtitle">
+                        Quelques repères pour situer mon expérience dans les assos, les
+                        projets que j’ai portés et la manière dont ça nourrit cette candidature.
+                    </p>
+                </div>
+
+                <div class="cv-timeline">
+                    <div class="cv-item reveal">
+                        <div class="cv-marker">
+                            <div class="cv-dot"></div>
+                            <div class="cv-line"></div>
+                        </div>
+                        <div class="cv-content">
+                            <div class="cv-date">2023 → aujourd’hui</div>
+                            <div class="cv-title">Engagement au Picasso / Pic’Asso</div>
+                            <div class="cv-text">
+                                Perms régulières, participation à l’organisation de soirées,
+                                réflexion sur l’aménagement du foyer et la manière de mieux
+                                transmettre d’un bureau à l’autre.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cv-item reveal">
+                        <div class="cv-marker">
+                            <div class="cv-dot"></div>
+                            <div class="cv-line"></div>
+                        </div>
+                        <div class="cv-content">
+                            <div class="cv-date">Projets transverses</div>
+                            <div class="cv-title">Collab avec d’autres assos & évènements</div>
+                            <div class="cv-text">
+                                Participation à des évènements communs, coordination avec le
+                                BDE et d’autres structures pour faire du Picasso un vrai point
+                                de convergence des initiatives étudiantes.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cv-item reveal">
+                        <div class="cv-marker">
+                            <div class="cv-dot"></div>
+                            <div class="cv-line"></div>
+                        </div>
+                        <div class="cv-content">
+                            <div class="cv-date">Côté projets</div>
+                            <div class="cv-title">Outils, organisation & documentation</div>
+                            <div class="cv-text">
+                                Habitude de structurer des docs, tableaux et outils
+                                numériques pour que les projets ne reposent pas uniquement
+                                sur la mémoire des personnes, mais sur des bases partagées.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cv-item reveal">
+                        <div class="cv-marker">
+                            <div class="cv-dot"></div>
+                        </div>
+                        <div class="cv-content">
+                            <div class="cv-date">Pour la suite</div>
+                            <div class="cv-title">Un Picasso plus clair, semestre après semestre</div>
+                            <div class="cv-text">
+                                L’objectif : que chaque bureau puisse aller un peu plus loin
+                                que le précédent, sans perdre de temps à « redécouvrir » le
+                                fonctionnement du foyer.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <div class="max-w footer-inner">
+                The Amazing Picasso — Candidature foyer UTC ·
+                <span>Prêt à en discuter autour d’un café ou d’une bière.</span>
+            </div>
+        </footer>
+    </main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

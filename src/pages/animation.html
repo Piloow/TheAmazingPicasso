@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>The Amazing Picasso – Animation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../style.css" />
+    <style>
+        /* === Animation page: balloons background + playful blocks === */
+        body.animation-page {
+            /* Fond doux (ne doit pas se répéter) */
+            background-color: #ffffff;
+            background-image:
+                radial-gradient(circle at 20% 0%, rgba(236,72,153,0.08), transparent 45%),
+                radial-gradient(circle at 80% 10%, rgba(99,102,241,0.08), transparent 50%),
+                radial-gradient(circle at 50% 100%, rgba(249,115,22,0.06), transparent 55%);
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+        }
+
+        /* Balloons background (page-wide) */
+        .balloons-bg {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+            opacity: 0.65;
+            filter: saturate(1.08);
+        }
+
+        /* Keep content above balloons */
+        .page > header,
+        .page > main {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* --- FIX header: keep it visible while scrolling (like other pages) --- */
+        body.animation-page .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 80;
+        }
+
+        /* Add spacing so content doesn't slide under the fixed header */
+        body.animation-page main {
+            padding-top: 96px; /* adjust if your header is taller */
+        }
+
+        .balloons-layer {
+            position: absolute;
+            inset: -14vh 0 -14vh 0;
+            transform: translate3d(0, var(--balloons-y, 0px), 0);
+            will-change: transform;
+        }
+
+        .balloons-layer.layer-2 {
+            opacity: 0.55;
+            transform: translate3d(0, var(--balloons-y2, 0px), 0);
+        }
+
+        .balloon {
+            position: absolute;
+            width: var(--w, 90px);
+            height: calc(var(--w, 90px) * 1.18);
+            border-radius: 999px;
+            background: radial-gradient(circle at 35% 25%, rgba(255,255,255,0.55), rgba(255,255,255,0.05) 45%, transparent 70%),
+                        linear-gradient(135deg, rgba(249,115,22,0.50), rgba(236,72,153,0.40), rgba(99,102,241,0.35));
+            box-shadow: 0 18px 50px rgba(17,24,39,0.10);
+            transform: translate3d(0, 0, 0) rotate(var(--r, 0deg));
+            opacity: var(--o, 0.9);
+            animation: balloonFloat var(--d, 14s) ease-in-out infinite;
+            animation-delay: var(--delay, 0s);
+            will-change: transform;
+        }
+
+        .balloon::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            bottom: -14px;
+            width: 10px;
+            height: 10px;
+            transform: translateX(-50%) rotate(45deg);
+            background: rgba(255,255,255,0.25);
+            border-radius: 2px;
+            filter: blur(0.2px);
+        }
+
+        .balloon-string {
+            position: absolute;
+            left: 50%;
+            top: calc(100% - 4px);
+            width: 1px;
+            height: var(--sh, 80px);
+            transform: translateX(-50%);
+            background: linear-gradient(to bottom, rgba(17,24,39,0.25), rgba(17,24,39,0.02));
+            opacity: 0.7;
+        }
+
+        @keyframes balloonFloat {
+            0%, 100% { transform: translate3d(0, 0, 0) rotate(var(--r, 0deg)); }
+            50% { transform: translate3d(0, 22px, 0) rotate(calc(var(--r, 0deg) + 10deg)); }
+        }
+
+        /* Little “party” chips */
+        .anim-chiprow {
+            display: flex;
+            gap: 0.6rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .anim-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.8rem;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.86);
+            border: 1px solid rgba(17,24,39,0.10);
+            box-shadow: 0 14px 30px rgba(17,24,39,0.08);
+            font-weight: 800;
+            color: rgba(17,24,39,0.72);
+        }
+
+        /* “Programme type” block to add soul */
+        .anim-program {
+            border-radius: 22px;
+            border: 1px solid rgba(17,24,39,0.12);
+            background: rgba(255,255,255,0.84);
+            box-shadow: 0 20px 60px rgba(17,24,39,0.12);
+            overflow: hidden;
+        }
+        .anim-program-head {
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid rgba(17,24,39,0.10);
+            background: linear-gradient(120deg, rgba(249,115,22,0.14), rgba(236,72,153,0.12), rgba(99,102,241,0.12));
+        }
+        .anim-program-head .title {
+            font-weight: 900;
+            font-size: 1.35rem;
+        }
+        .anim-program-grid {
+            padding: 1.1rem 1.2rem 1.2rem;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.85rem;
+        }
+        @media (max-width: 900px) { .anim-program-grid { grid-template-columns: 1fr; } }
+
+        .anim-mini {
+            border-radius: 18px;
+            background: rgba(249,250,251,0.80);
+            border: 1px solid rgba(17,24,39,0.10);
+            padding: 0.9rem 1rem;
+        }
+        .anim-mini .k {
+            font-weight: 900;
+            margin-bottom: 0.25rem;
+        }
+        .anim-mini .m {
+            font-weight: 800;
+            color: rgba(17,24,39,0.60);
+            margin-bottom: 0.35rem;
+        }
+        .anim-mini .t {
+            color: rgba(17,24,39,0.78);
+        }
+
+        /* --- Section style variant #1: "Relancer / améliorer" as a pinboard --- */
+        .anim-board {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.95rem;
+        }
+        @media (max-width: 900px) { .anim-board { grid-template-columns: 1fr; } }
+
+        .anim-note {
+            position: relative;
+            border-radius: 18px;
+            border: 1px solid rgba(17,24,39,0.10);
+            background: rgba(255,255,255,0.88);
+            box-shadow: 0 18px 55px rgba(17,24,39,0.10);
+            padding: 1.0rem 1.0rem 1.05rem;
+            overflow: hidden;
+            transform: rotate(var(--tilt, 0deg));
+        }
+        .anim-note::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 18% 10%, rgba(249,115,22,0.14), transparent 55%),
+                        radial-gradient(circle at 86% 30%, rgba(99,102,241,0.12), transparent 55%);
+            opacity: 0.8;
+            pointer-events: none;
+        }
+        .anim-note::after {
+            content: "";
+            position: absolute;
+            top: 10px;
+            left: 14px;
+            width: 54px;
+            height: 16px;
+            border-radius: 999px;
+            background: rgba(17,24,39,0.10);
+            box-shadow: 0 8px 18px rgba(17,24,39,0.10);
+            opacity: 0.55;
+            transform: rotate(-6deg);
+            pointer-events: none;
+        }
+        .anim-note .project-title,
+        .anim-note .project-meta,
+        .anim-note .project-text {
+            position: relative;
+        }
+
+        /* --- Section style variant #2: "Amplifie" as a playful timeline --- */
+        .anim-timeline {
+            margin-top: 0.25rem;
+            border-radius: 22px;
+            border: 1px solid rgba(17,24,39,0.12);
+            background: rgba(255,255,255,0.84);
+            box-shadow: 0 20px 60px rgba(17,24,39,0.12);
+            overflow: hidden;
+        }
+        .anim-timeline-head {
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid rgba(17,24,39,0.10);
+            background: linear-gradient(120deg, rgba(99,102,241,0.12), rgba(236,72,153,0.10), rgba(249,115,22,0.10));
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        .anim-timeline-head .label {
+            font-weight: 900;
+            font-size: 1.25rem;
+        }
+        .anim-timeline-head .hint {
+            opacity: 0.72;
+            font-weight: 800;
+            font-size: 0.98rem;
+        }
+        .anim-steps {
+            padding: 1.05rem 1.2rem 1.2rem;
+            display: grid;
+            gap: 0.85rem;
+        }
+        .anim-step {
+            display: grid;
+            grid-template-columns: 44px minmax(0, 1fr);
+            gap: 0.85rem;
+            align-items: start;
+            padding: 0.95rem 1.0rem;
+            border-radius: 18px;
+            background: rgba(249,250,251,0.82);
+            border: 1px solid rgba(17,24,39,0.10);
+        }
+        .anim-step .n {
+            width: 36px;
+            height: 36px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            background: rgba(17,24,39,0.08);
+            color: rgba(17,24,39,0.80);
+            box-shadow: 0 10px 24px rgba(17,24,39,0.08);
+        }
+        .anim-step .t {
+            font-weight: 900;
+            margin-bottom: 0.2rem;
+        }
+        .anim-step .m {
+            font-weight: 800;
+            color: rgba(17,24,39,0.60);
+            margin-bottom: 0.35rem;
+        }
+        .anim-step .p {
+            color: rgba(17,24,39,0.78);
+        }
+
+        /* Step 3: square image duo under text + optional tilt */
+        .anim-imggrid {
+            margin-top: 12px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        @media (max-width: 900px) {
+            .anim-imggrid { grid-template-columns: 1fr; }
+        }
+
+        .anim-imgcard {
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(17,24,39,0.12);
+            background: rgba(255,255,255,0.88);
+            box-shadow: 0 18px 45px rgba(17,24,39,0.10);
+            transform-style: preserve-3d;
+            will-change: transform;
+            transition: transform 0.16s ease, box-shadow 0.16s ease;
+        }
+
+        .anim-imgcard:hover {
+            box-shadow: 0 24px 60px rgba(17,24,39,0.14);
+        }
+
+        .anim-imgcard img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            height: auto;
+            object-fit: cover;
+            display: block;
+            transform: translateZ(14px);
+        }
+
+        /* If an image would be cropped by object-fit: cover, opt-in to contain for a specific card */
+        .anim-imgcard.is-contain img {
+            object-fit: contain;
+            background: rgba(255,255,255,0.92);
+        }
+
+        /* optional: tiny padding feel while staying square */
+        .anim-imgcard.is-contain img {
+            padding: 6px;
+            box-sizing: border-box;
+        }
+
+        .anim-imgcap {
+            padding: 0.6rem 0.75rem 0.75rem;
+            font-weight: 800;
+            color: rgba(17,24,39,0.68);
+            font-size: 0.95rem;
+            background: rgba(249,250,251,0.75);
+            border-top: 1px solid rgba(17,24,39,0.08);
+        }
+
+        /* Soften on mobile */
+        @media (max-width: 720px) {
+            .balloons-bg { opacity: 0.45; }
+        }
+    </style>
+</head>
+
+<body id="top" class="animation-page">
+<div class="page">
+    <!-- Balloons (fond de page + parallax) -->
+    <div class="balloons-bg" aria-hidden="true">
+        <div class="balloons-layer layer-1">
+            <div class="balloon" style="left: 6%; top: 10%; --w: 86px; --r: -10deg; --d: 15s; --delay: -4s; --o: 0.92;"><span class="balloon-string" style="--sh: 92px;"></span></div>
+            <div class="balloon" style="left: 18%; top: 62%; --w: 72px; --r: 8deg; --d: 14s; --delay: -7s; --o: 0.88;"><span class="balloon-string" style="--sh: 70px;"></span></div>
+            <div class="balloon" style="left: 28%; top: 28%; --w: 96px; --r: 14deg; --d: 16s; --delay: -2s; --o: 0.90;"><span class="balloon-string" style="--sh: 110px;"></span></div>
+            <div class="balloon" style="left: 44%; top: 14%; --w: 78px; --r: -14deg; --d: 13.5s; --delay: -9s; --o: 0.86;"><span class="balloon-string" style="--sh: 80px;"></span></div>
+            <div class="balloon" style="left: 56%; top: 72%; --w: 88px; --r: 10deg; --d: 15.5s; --delay: -5s; --o: 0.90;"><span class="balloon-string" style="--sh: 100px;"></span></div>
+            <div class="balloon" style="left: 70%; top: 38%; --w: 74px; --r: -6deg; --d: 14.5s; --delay: -11s; --o: 0.84;"><span class="balloon-string" style="--sh: 76px;"></span></div>
+            <div class="balloon" style="left: 82%; top: 12%; --w: 92px; --r: 12deg; --d: 16.5s; --delay: -3s; --o: 0.88;"><span class="balloon-string" style="--sh: 108px;"></span></div>
+            <div class="balloon" style="left: 92%; top: 58%; --w: 76px; --r: -12deg; --d: 13.8s; --delay: -8s; --o: 0.86;"><span class="balloon-string" style="--sh: 86px;"></span></div>
+        </div>
+        <div class="balloons-layer layer-2">
+            <div class="balloon" style="left: 10%; top: 36%; --w: 64px; --r: 6deg; --d: 19s; --delay: -6s; --o: 0.55;"><span class="balloon-string" style="--sh: 70px;"></span></div>
+            <div class="balloon" style="left: 36%; top: 76%; --w: 68px; --r: -8deg; --d: 20s; --delay: -10s; --o: 0.55;"><span class="balloon-string" style="--sh: 80px;"></span></div>
+            <div class="balloon" style="left: 60%; top: 22%; --w: 62px; --r: 10deg; --d: 18.5s; --delay: -12s; --o: 0.55;"><span class="balloon-string" style="--sh: 66px;"></span></div>
+            <div class="balloon" style="left: 86%; top: 82%; --w: 66px; --r: -10deg; --d: 21s; --delay: -9s; --o: 0.55;"><span class="balloon-string" style="--sh: 78px;"></span></div>
+        </div>
+    </div>
+    <!-- HEADER avec logo centré + nav -->
+    <header class="site-header">
+        <div class="site-header-inner">
+            <div class="header-bar max-w">
+
+                <!-- NAV GAUCHE -->
+                <nav class="site-nav site-nav-left">
+                    <a href="animation.html">Animation</a>
+                    <a href="appro.html">Appro</a>
+                    <a href="com.html">Com</a>
+                    <a href="estu.html">Estu</a>
+                </nav>
+
+                <!-- LOGO CENTRÉ -->
+                <div class="logo-container">
+                    <a href="../index.html#top" class="logo-link">
+                        <img
+                                src="../../assets/TheAmazingPicasso.png"
+                                alt="The Amazing Picasso"
+                                class="logo-image"
+                        />
+                    </a>
+                </div>
+
+                <!-- NAV DROITE -->
+                <nav class="site-nav site-nav-right">
+                    <a href="info.html">Info</a>
+                    <a href="locaux.html">Locaux</a>
+                    <a href="rse.html">RSE</a>
+                    <a href="treso.html">Tréso</a>
+                </nav>
+
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- HERO -->
+        <section class="hero">
+            <div class="max-w hero-inner reveal" data-parallax="0.03">
+                <div class="hero-kicker">Axes du projet</div>
+                <h1 class="hero-title">
+                    <s>Animation</s> Team Vie du Foyer ?<br />
+                    <span>faire vivre le Pic sans cramer la team</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Des formats simples, réguliers, et des idées qui donnent envie de s’approprier le foyer :
+                    ateliers, collabs, jeux, moments dehors...
+                    <br>
+                    <br>
+                    Ouais flemme de faire une page en plus <br>donc c'est Anim x Artiste quoi
+                </p>
+
+                <div class="anim-chiprow" aria-hidden="true">
+                    <span class="anim-chip">🎈 formats légers</span>
+                    <span class="anim-chip">🎨 artistique</span>
+                    <span class="anim-chip">🤝 collabs</span>
+                    <span class="anim-chip">🌤️ dehors</span>
+                    <span class="anim-chip">️🔠 Lettre = 1:W</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- INTRO / INTENTION -->
+        <section class="section">
+            <div class="max-w">
+                <div class="section-header reveal">
+                    <div class="section-kicker">Intention</div>
+                    <h2 class="section-title">Plus vivant, plus artistique, plus collectif</h2>
+                    <p class="section-subtitle">
+                        L’animation du Pic doit booster la vie du foyer, mais sans transformer la team en machine à events.
+                        L’idée : des formats “sans effort”, faciles à relancer d’un semestre à l’autre.
+                        <br> Des anims Low-Tech quoi !
+                    </p>
+                </div>
+
+                <div class="profile-chips reveal">
+                    <span class="pill">Formats récurrents</span>
+                    <span class="pill">Collabs inter-assos</span>
+                    <span class="pill">Ateliers créatifs</span>
+                    <span class="pill">Dehors au printemps</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROGRAMME TYPE (donne de l’âme) -->
+        <section class="section">
+            <div class="max-w">
+                <div class="section-header reveal">
+                    <div class="section-kicker">Idée de rythme</div>
+                    <h2 class="section-title">Un programme “Low-Tech”</h2>
+                    <p class="section-subtitle">
+                        Un cadre simple : des petits rendez-vous réguliers.
+                    </p>
+                </div>
+
+                <div class="anim-program reveal" data-parallax="0.02">
+                    <div class="anim-program-head">
+                        <div class="title">📅 Planning ?</div>
+                        <div style="opacity:0.72; margin-top:0.15rem;">+ petit oui mais + souvent aussi</div>
+                    </div>
+                    <div class="anim-program-grid">
+                        <div class="anim-mini">
+                            <div class="k">🎬 Pic Passion</div>
+                            <div class="m">1x / 2 semaines</div>
+                            <div class="t">Mini talk / atelier (découverte, asso, prof…).<br>Figma, makeup, couture...</div>
+                        </div>
+                        <div class="anim-mini">
+                            <div class="k">🎨 Expo temporaire</div>
+                            <div class="m">1x / mois</div>
+                            <div class="t">Dessin, photo, crochet, cuisine, tout en gros… puis mini expo au Pic (mur dédié).</div>
+                        </div>
+                        <div class="anim-mini">
+                            <div class="k">🌤️ Dehors au printemps</div>
+                            <div class="m">dès qu’il fait beau</div>
+                            <div class="t">Mölkky / Cornhole / Spikeball : sortie rapide + com “viens jouer”.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AMÉLIORATIONS / NOUVEAUTÉS -->
+        <section class="section">
+            <div class="max-w">
+                <div class="section-header reveal">
+                    <div class="section-kicker">Améliorations / Nouveautés</div>
+                    <h2 class="section-title">Les choses à relancer / améliorer</h2>
+                    <p class="section-subtitle">
+                        Le Pic comme un vrai lieu de vie.
+                    </p>
+                </div>
+
+                <div class="anim-board">
+                    <div class="anim-note reveal" style="--tilt:-1.2deg;">
+                        <div class="project-title">Relance des “Pic Passion” + conférences</div>
+                        <div class="project-meta">Conférences / ateliers – intervenant·e·s internes & externes</div>
+                        <div class="project-text">
+                            Remettre en avant des conférences / ateliers pour vraiment s’approprier le foyer :
+                            intervenant·e·s internes (assos, étudiant·e·s, profs) et externes (invités).
+                            Et évidement les Pic Passion, abandonnés depuis un petit temps.
+                        </div>
+                    </div>
+
+                    <div class="anim-note reveal" style="--tilt:1.1deg;">
+                        <div class="project-title">Journées caritatives & actions solidaires</div>
+                        <div class="project-meta">Collectes, tombola, enchères, arrondi, brocante…</div>
+                        <div class="project-text">
+                            Parce qu’il n’y a pas que le Téléthon qui sait faire, lever des fonds avec des formats cools :
+                            tombola, ventes aux enchères, prix arrondi, #BrocanteAuPic ?
+                            Bénéfices de sérigraphie reversés, encore un Binto ?
+                        </div>
+                    </div>
+
+                    <div class="anim-note reveal" style="--tilt:-0.6deg;">
+                        <div class="project-title">Meilleur suivi des perms entre semestres</div>
+                        <div class="project-meta">Transmission + continuité</div>
+                        <div class="project-text">
+                            Garder une continuité : ce qui a été fait, ce qui marche, ce qu’on reconduit.
+                            Outils sur le site ou Drive pour le suivis (+ poussé que la passation actuelle, comme les brasseries pour la binch quoi)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROJETS À CONTINUER / POUSSER -->
+        <section class="section">
+            <div class="max-w">
+                <div class="section-header reveal">
+                    <div class="section-kicker">Projet à continuer / pousser</div>
+                    <h2 class="section-title">En gros</h2>
+                    <p class="section-subtitle">
+                        Des idées qui boostent l’animation du Pic, tout en restant “légères” pour la team.
+                    </p>
+                </div>
+
+                <div class="anim-timeline reveal" data-parallax="0.02">
+                    <div class="anim-timeline-head">
+                        <div class="label">🧩 À amplifier (sans surcharger)</div>
+                        <div class="hint">formats légers · répétables · utiles</div>
+                    </div>
+
+                    <div class="anim-steps">
+                        <div class="anim-step">
+                            <div class="n">1</div>
+                            <div>
+                                <div class="t">Continuer les anim en feat</div>
+                                <div class="m">Collab avec d’autres teams / assos</div>
+                                <div class="p">Continuer les anim en feat (ex : dégustations de soft, formats croisés) : ça répartit la charge et ça crée des passerelles entre teams.</div>
+                            </div>
+                        </div>
+
+                        <div class="anim-step">
+                            <div class="n">2</div>
+                            <div>
+                                <div class="t">Plus d’artistiqueeeee encoreee</div>
+                                <div class="m">Ateliers + expo au Pic</div>
+                                <div class="p">Plus d’ateliers : dessin, photo, peinture, crochet, cuisine, pâte à modeler… et ensuite on expose (youyou) : mini expo, affichage, murs dédiés.</div>
+                            </div>
+                        </div>
+
+                        <div class="anim-step">
+                            <div class="n">3</div>
+                            <div>
+                                <div class="t">Nouveaux jeux + rangement propre</div>
+                                <div class="m">Stop le bazar bazar</div>
+                                <div class="p">Trouver un moyen de bien ranger les jeux (actuellement c’est le bazar).</div>
+                                <div class="p">Choses à pousser : jeux perso du Pic (Picopoly, Trivial Pursuit de @Rox).</div>
+
+                                <div class="anim-imggrid" aria-label="Exemples de jeux du Pic">
+                                    <figure class="anim-imgcard" data-tiltcard style="margin:0;">
+                                        <img
+                                                src="../../assets/anim/TeddyGarous.png"
+                                                alt="Jeu perso du Pic : TeddyGarous"
+                                        />
+                                        <figcaption class="anim-imgcap">TeddyGarous</figcaption>
+                                    </figure>
+
+                                    <figure class="anim-imgcard is-contain" data-tiltcard style="margin:0;">
+                                        <img
+                                                src="../../assets/anim/CrashBornes.png"
+                                                alt="Jeu perso du Pic : Crash Bornes"
+                                        />
+                                        <figcaption class="anim-imgcap">Crash Bornes</figcaption>
+                                    </figure>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="anim-step">
+                            <div class="n">4</div>
+                            <div>
+                                <div class="t">Printemps = plus de choses dehors</div>
+                                <div class="m">Jeux extérieurs + mise en avant</div>
+                                <div class="p">Refaire un tri des jeux “extérieur” et faire plus de com / mise en avant : Molky, Cornhole, Spikeball… et encourager l’usage quand il fait beau.</div>
+                            </div>
+                        </div>
+
+                        <div class="anim-step">
+                            <div class="n">5</div>
+                            <div>
+                                <div class="t">Bibliothèque : relance & mise en avant</div>
+                                <div class="m">Signalétique + com</div>
+                                <div class="p">Elle marche bien ? Alors on la met en avant. Elle dort ? Alors on la relance. Une petite com et une meilleure visibilité peuvent suffire à la rebooster.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <div class="max-w footer-inner">
+                The Amazing Picasso — Animation ·
+                <span><a href="../index.html#top">Retour à l’accueil</a> pour explorer les autres axes.</span>
+            </div>
+        </footer>
+    </main>
+</div>
+
+<script>
+    // Balloons parallax (page Animation)
+    (function () {
+        const bg = document.querySelector('.balloons-bg');
+        if (!bg) return;
+
+        let raf = null;
+        let targetY = 0;
+        let targetY2 = 0;
+        let currentY = 0;
+        let currentY2 = 0;
+
+        const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+        const lerp = (a, b, t) => a + (b - a) * t;
+
+        const updateTargets = () => {
+            const y = window.scrollY || window.pageYOffset || 0;
+            targetY = clamp(-y * 0.05, -220, 220);
+            targetY2 = clamp(-y * 0.085, -320, 320);
+        };
+
+        const tick = () => {
+            currentY = lerp(currentY, targetY, 0.10);
+            currentY2 = lerp(currentY2, targetY2, 0.10);
+
+            bg.style.setProperty('--balloons-y', `${currentY}px`);
+            bg.style.setProperty('--balloons-y2', `${currentY2}px`);
+
+            raf = requestAnimationFrame(tick);
+        };
+
+        const onScroll = () => {
+            updateTargets();
+            if (raf == null) raf = requestAnimationFrame(tick);
+        };
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll, { passive: true });
+        updateTargets();
+        raf = requestAnimationFrame(tick);
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                if (raf != null) cancelAnimationFrame(raf);
+                raf = null;
+            } else {
+                updateTargets();
+                if (raf == null) raf = requestAnimationFrame(tick);
+            }
+        });
+    })();
+    // Mini tilt for the square image cards (Step 3)
+    (function () {
+        const cards = Array.from(document.querySelectorAll('[data-tiltcard]'));
+        if (!cards.length) return;
+
+        const maxRotate = 10; // degrees
+        const perspective = 700;
+
+        const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+        cards.forEach((card) => {
+            let raf = null;
+            let targetRX = 0;
+            let targetRY = 0;
+            let currentRX = 0;
+            let currentRY = 0;
+
+            const apply = () => {
+                currentRX += (targetRX - currentRX) * 0.16;
+                currentRY += (targetRY - currentRY) * 0.16;
+
+                // snap tiny jitter
+                if (Math.abs(currentRX - targetRX) < 0.01) currentRX = targetRX;
+                if (Math.abs(currentRY - targetRY) < 0.01) currentRY = targetRY;
+
+                card.style.transform = `perspective(${perspective}px) rotateX(${currentRX}deg) rotateY(${currentRY}deg)`;
+                raf = requestAnimationFrame(apply);
+            };
+
+            const start = () => {
+                if (raf != null) return;
+                raf = requestAnimationFrame(apply);
+            };
+
+            const stop = () => {
+                if (raf == null) return;
+                cancelAnimationFrame(raf);
+                raf = null;
+            };
+
+            const onMove = (e) => {
+                const rect = card.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+
+                const nx = (e.clientX - cx) / (rect.width / 2);
+                const ny = (e.clientY - cy) / (rect.height / 2);
+
+                const px = clamp(nx, -1, 1);
+                const py = clamp(ny, -1, 1);
+
+                targetRY = px * maxRotate;
+                targetRX = -py * maxRotate;
+                start();
+            };
+
+            const onLeave = () => {
+                targetRX = 0;
+                targetRY = 0;
+                // let it ease back, then stop
+                setTimeout(() => {
+                    stop();
+                    card.style.transform = '';
+                    currentRX = 0;
+                    currentRY = 0;
+                }, 180);
+            };
+
+            card.addEventListener('mousemove', onMove, { passive: true });
+            card.addEventListener('mouseleave', onLeave, { passive: true });
+        });
+    })();
+</script>
+<script src="../script.js"></script>
+</body>
+</html>

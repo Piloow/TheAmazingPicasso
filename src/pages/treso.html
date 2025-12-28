@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>The Amazing Picasso – Tréso</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <style>
+    /* ========== TRÉSO THEME (Picsou / billets / audit) ========== */
+
+    /* Background "banknote" pattern + subtle parallax via CSS vars */
+    .money-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.22;
+      filter: saturate(1.05) contrast(1.05);
+      overflow: hidden;
+    }
+
+    /* Keep main content above the background (DO NOT touch header positioning) */
+    .page > main {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Safety: header stays above everything */
+    .site-header {
+      z-index: 40;
+    }
+
+    .money-layer {
+      position: absolute;
+      inset: -18vh -10vw -18vh -10vw;
+      transform: translate3d(0, var(--money-y, 0px), 0);
+      will-change: transform;
+    }
+
+    .money-layer.layer-2 {
+      opacity: 0.65;
+      transform: translate3d(0, var(--money-y2, 0px), 0);
+    }
+
+    /* repeating "banknote" stamps */
+    .stamp {
+      position: absolute;
+      width: 220px;
+      height: 120px;
+      border-radius: 16px;
+      border: 1px solid rgba(17, 24, 39, 0.12);
+      background:
+        radial-gradient(circle at 30% 30%, rgba(34, 197, 94, 0.5), transparent 100%),
+        rgba(255, 255, 255, 0.65);
+      box-shadow: 0 22px 60px rgba(17, 24, 39, 0.08);
+      transform: rotate(var(--r, 0deg));
+      animation: stampFloat var(--d, 16s) ease-in-out infinite;
+      animation-delay: var(--delay, 0s);
+      will-change: transform;
+    }
+
+    .stamp::before {
+      content: "PICSOUS";
+      position: absolute;
+      top: 14px;
+      left: 16px;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      font-size: 0.82rem;
+      color: rgba(17, 24, 39, 0.55);
+    }
+
+    .stamp::after {
+      content: "$$$";
+      position: absolute;
+      bottom: 14px;
+      right: 16px;
+      font-weight: 900;
+      letter-spacing: 0.22em;
+      font-size: 0.95rem;
+      color: rgba(17, 24, 39, 0.35);
+    }
+
+    @keyframes stampFloat {
+      0%, 100% { transform: translate3d(0, 0, 0) rotate(var(--r, 0deg)); }
+      50% { transform: translate3d(0, 16px, 0) rotate(calc(var(--r, 0deg) + 6deg)); }
+    }
+
+    /* Hero accent : "gold" chips */
+    .treso-chips {
+      display: flex;
+      gap: 0.6rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 1.1rem;
+    }
+
+    .treso-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.55rem 0.85rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid rgba(17, 24, 39, 0.10);
+      box-shadow: 0 16px 40px rgba(17, 24, 39, 0.08);
+      font-weight: 800;
+      color: rgba(17, 24, 39, 0.78);
+    }
+
+    .treso-chip .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(245, 158, 11, 0.70);
+      box-shadow: 0 0 0 6px rgba(245, 158, 11, 0.18);
+    }
+
+    /* "Ledger" block : looks like accounting sheet */
+    .ledger {
+      border-radius: 22px;
+      border: 1px solid rgba(17, 24, 39, 0.12);
+      background: rgba(255, 255, 255, 0.84);
+      box-shadow: 0 18px 55px rgba(17, 24, 39, 0.10);
+      overflow: hidden;
+    }
+
+    .ledger-head {
+      padding: 1rem 1.2rem;
+      border-bottom: 1px solid rgba(17, 24, 39, 0.10);
+      background: linear-gradient(120deg, rgba(34,197,94,0.10), rgba(245,158,11,0.10), rgba(99,102,241,0.08));
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .ledger-title {
+      font-weight: 950;
+      font-size: 1.35rem;
+      letter-spacing: -0.02em;
+    }
+
+    .ledger-sub {
+      color: rgba(17, 24, 39, 0.62);
+      font-weight: 700;
+    }
+
+    .ledger-rows {
+      padding: 0.9rem 1.2rem 1.2rem;
+      display: grid;
+      gap: 0.7rem;
+    }
+
+    .ledger-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 1rem;
+      align-items: center;
+      padding: 0.9rem 1rem;
+      border-radius: 16px;
+      border: 1px solid rgba(17, 24, 39, 0.10);
+      background: rgba(249, 250, 251, 0.80);
+    }
+
+    @media (max-width: 860px) {
+      .ledger-row { grid-template-columns: minmax(0, 1fr); }
+    }
+
+    .ledger-left {
+      display: grid;
+      gap: 0.25rem;
+    }
+
+    .ledger-k {
+      font-weight: 900;
+      font-size: 1.15rem;
+    }
+
+    .ledger-m {
+      color: rgba(17, 24, 39, 0.62);
+      font-weight: 700;
+    }
+
+    .ledger-right {
+      display: flex;
+      gap: 0.6rem;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.3rem 0.65rem;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 0.9rem;
+      border: 1px solid rgba(17, 24, 39, 0.10);
+      background: rgba(255, 255, 255, 0.75);
+      color: rgba(17, 24, 39, 0.75);
+    }
+
+    .tag .mini {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.72);
+      box-shadow: 0 0 0 5px rgba(34, 197, 94, 0.18);
+    }
+
+    .tag.warn .mini {
+      background: rgba(245, 158, 11, 0.78);
+      box-shadow: 0 0 0 5px rgba(245, 158, 11, 0.20);
+    }
+
+    .tag.risk .mini {
+      background: rgba(244, 63, 94, 0.78);
+      box-shadow: 0 0 0 5px rgba(244, 63, 94, 0.18);
+    }
+
+    /* Funny footer note */
+    .punchline {
+      margin-top: 1rem;
+      text-align: center;
+      color: rgba(17, 24, 39, 0.62);
+      font-weight: 800;
+    }
+
+    /* Mobile soften */
+    @media (max-width: 720px) {
+      .money-bg { opacity: 0.16; }
+    }
+  </style>
+</head>
+
+<body id="top">
+  <div class="page">
+
+    <!-- Money background (parallax) -->
+    <div class="money-bg" aria-hidden="true">
+      <div class="money-layer layer-1">
+        <div class="stamp" style="left: 6%; top: 10%; --r: -12deg; --d: 14s; --delay: -2s;"></div>
+        <div class="stamp" style="left: 22%; top: 56%; --r: 9deg; --d: 16s; --delay: -7s;"></div>
+        <div class="stamp" style="left: 48%; top: 22%; --r: -6deg; --d: 18s; --delay: -4s;"></div>
+        <div class="stamp" style="left: 70%; top: 60%; --r: 11deg; --d: 15s; --delay: -9s;"></div>
+        <div class="stamp" style="left: 82%; top: 14%; --r: 7deg; --d: 17s; --delay: -6s;"></div>
+      </div>
+      <div class="money-layer layer-2">
+        <div class="stamp" style="left: 10%; top: 34%; --r: 6deg; --d: 20s; --delay: -3s; width: 200px; height: 110px;"></div>
+        <div class="stamp" style="left: 58%; top: 44%; --r: -10deg; --d: 22s; --delay: -10s; width: 210px; height: 115px;"></div>
+        <div class="stamp" style="left: 78%; top: 74%; --r: 12deg; --d: 21s; --delay: -8s; width: 190px; height: 105px;"></div>
+      </div>
+    </div>
+
+    <!-- HEADER -->
+      <header class="site-header">
+          <div class="site-header-inner">
+              <div class="header-bar max-w">
+
+                  <!-- NAV GAUCHE -->
+                  <nav class="site-nav site-nav-left">
+                      <a href="animation.html">Animation</a>
+                      <a href="appro.html">Appro</a>
+                      <a href="com.html">Com</a>
+                      <a href="estu.html">Estu</a>
+                  </nav>
+
+                  <!-- LOGO CENTRÉ -->
+                  <div class="logo-container">
+                      <a href="../index.html#top" class="logo-link">
+                          <img
+                                  src="../../assets/TheAmazingPicasso.png"
+                                  alt="The Amazing Picasso"
+                                  class="logo-image"
+                          />
+                      </a>
+                  </div>
+
+                  <!-- NAV DROITE -->
+                  <nav class="site-nav site-nav-right">
+                      <a href="info.html">Info</a>
+                      <a href="locaux.html">Locaux</a>
+                      <a href="rse.html">RSE</a>
+                      <a href="treso.html">Tréso</a>
+                  </nav>
+
+              </div>
+          </div>
+      </header>
+
+    <main>
+      <!-- HERO -->
+      <section class="hero">
+        <div class="max-w hero-inner reveal" data-parallax="0.02">
+          <div class="hero-kicker">Axes du projet</div>
+          <h1 class="hero-title">
+            Tréso<br />
+            <span>argent, thune, Picsou… mais propre.</span>
+          </h1>
+          <p class="hero-subtitle">
+            La tréso, c’est le nerf de la guerre : <strong>rigueur</strong>, <strong>transparence</strong> et <strong>outils</strong>.
+            Objectif : moins de galères, plus de clarté — et un Pic qui tourne serein.
+          </p>
+
+          <div class="treso-chips" aria-hidden="true">
+            <div class="treso-chip"><span class="dot"></span>État de trésorerie</div>
+            <div class="treso-chip"><span class="dot"></span>Archives clean</div>
+            <div class="treso-chip"><span class="dot"></span>Analyse catégorie</div>
+            <div class="treso-chip"><span class="dot"></span>Pas de notes</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- AMÉLIORATIONS / NOUVEAUTÉS -->
+      <section class="section">
+        <div class="max-w">
+          <div class="section-header reveal">
+            <div class="section-kicker">Améliorations / Nouveautés</div>
+            <h2 class="section-title">À mettre en place</h2>
+            <p class="section-subtitle">Un socle simple : documents à jour, rangement pro, paiements propres, admin cadrée.</p>
+          </div>
+
+          <div class="ledger reveal" data-parallax="0.02">
+            <div class="ledger-head">
+              <div class="ledger-title">📒 Plan d’action Tréso</div>
+              <div class="ledger-sub">pas d'impro, pas de bétises</div>
+            </div>
+
+            <div class="ledger-rows">
+              <div class="ledger-row">
+                <div class="ledger-left">
+                  <div class="ledger-k">📝 Mettre à jour la fiche d’emprunt</div>
+                  <div class="ledger-m">Prix, règles, responsabilités — clair et cohérent.</div>
+                </div>
+                <div class="ledger-right">
+                  <span class="tag"><span class="mini"></span>rapide</span>
+                  <span class="tag warn"><span class="mini"></span>important</span>
+                </div>
+              </div>
+
+              <div class="ledger-row">
+                <div class="ledger-left">
+                  <div class="ledger-k">🗂️ Système clean pour les archives / factures</div>
+                  <div class="ledger-m">Classeurs, scans, nomenclature : retrouver une facture en 20 secondes.</div>
+                </div>
+                <div class="ledger-right">
+                  <span class="tag"><span class="mini"></span>structure</span>
+                  <span class="tag warn"><span class="mini"></span>hygiène admin</span>
+                </div>
+              </div>
+
+              <div class="ledger-row">
+                <div class="ledger-left">
+                  <div class="ledger-k">🚫 “No Note Semester”</div>
+                  <div class="ledger-m">Les notes c’est fini : on cadre et on paye proprement.</div>
+                </div>
+                <div class="ledger-right">
+                  <span class="tag risk"><span class="mini"></span>réduit les pertes</span>
+                  <span class="tag"><span class="mini"></span>simple règle</span>
+                </div>
+              </div>
+
+              <div class="ledger-row">
+                <div class="ledger-left">
+                  <div class="ledger-k">🏛️ Travail administratif (SIRET / rattachement)</div>
+                  <div class="ledger-m">Clarifier l’existant (BDE vs PVDC) et cadrer ce qui est faisable.</div>
+                </div>
+                <div class="ledger-right">
+                  <span class="tag warn"><span class="mini"></span>à investiguer</span>
+                  <span class="tag"><span class="mini"></span>cadre légal</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p class="punchline reveal" style="margin-top: 2rem">Pas de tréso = pas d’argent → pas d’argent = pas de chocolat → pas de chocolat = pas de bras.
+              <br>(Je suis pas sûr de moi mais je sais que Lettre = 8:!)</p>
+        </div>
+      </section>
+
+      <!-- PROJETS À CONTINUER -->
+      <section class="section">
+        <div class="max-w">
+          <div class="section-header reveal">
+            <div class="section-kicker">Projets à continuer</div>
+            <h2 class="section-title">Audit & outillage</h2>
+            <p class="section-subtitle">L’objectif : comprendre où part l’argent, où on gagne, où on perd — et agir.</p>
+          </div>
+
+          <div class="projects-list">
+            <div class="project-card reveal">
+              <div class="project-title">🔎 Audit par catégories & articles (vraiment poussé)</div>
+              <div class="project-meta">achats • ventes • marge • anomalies</div>
+              <div class="project-text">
+                Bilan complet : catégories par catégories, puis articles par articles.
+                On identifie les points “pas bien” (marge, pertes, incohérences) et on propose des actions.
+                  S/O en 2022 iels ont fait ça c'était super utile !
+              </div>
+            </div>
+
+            <div class="project-card reveal">
+              <div class="project-title">📊 Outils BI (Power BI / dashboards)</div>
+              <div class="project-meta">Appro × Tréso • suivi mensuel • décisions</div>
+              <div class="project-text">
+                Un tableau de bord simple pour piloter : stocks, ventes, marges, tendances
+                et alertes (catégories en dérive, produits qui stagnent, etc.).
+              </div>
+            </div>
+
+            <div class="project-card reveal">
+              <div class="project-title">🎓 Formation début de semestre (pour tout le Pic)</div>
+              <div class="project-meta">process • bonnes pratiques • zéro galère</div>
+              <div class="project-text">
+                On forme l’équipe dès le début : comment on note, comment on archive,
+                comment on achète, comment on évite les erreurs.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div class="max-w footer-inner">
+          The Amazing Picasso — Tréso ·
+          <span><a href="../index.html#top">Retour à l’accueil</a> pour explorer les autres axes.</span>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <!-- Parallax for money background -->
+  <script>
+    (function () {
+      const bg = document.querySelector('.money-bg');
+      if (!bg) return;
+
+      let raf = null;
+      let targetY = 0;
+      let targetY2 = 0;
+      let currentY = 0;
+      let currentY2 = 0;
+
+      const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+      const lerp = (a, b, t) => a + (b - a) * t;
+
+      const updateTargets = () => {
+        const y = window.scrollY || window.pageYOffset || 0;
+        targetY = clamp(-y * 0.05, -240, 240);
+        targetY2 = clamp(-y * 0.085, -360, 360);
+      };
+
+      const tick = () => {
+        currentY = lerp(currentY, targetY, 0.10);
+        currentY2 = lerp(currentY2, targetY2, 0.10);
+
+        bg.style.setProperty('--money-y', `${currentY}px`);
+        bg.style.setProperty('--money-y2', `${currentY2}px`);
+
+        raf = requestAnimationFrame(tick);
+      };
+
+      const onScroll = () => {
+        updateTargets();
+        if (raf == null) raf = requestAnimationFrame(tick);
+      };
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      updateTargets();
+      raf = requestAnimationFrame(tick);
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          if (raf != null) cancelAnimationFrame(raf);
+          raf = null;
+        } else {
+          updateTargets();
+          if (raf == null) raf = requestAnimationFrame(tick);
+        }
+      });
+    })();
+  </script>
+
+  <script src="../script.js"></script>
+</body>
+</html>
