@@ -89,7 +89,7 @@
         if (!input) return;
 
         if (input.trim().toLowerCase() === "wikipic!".toLowerCase()) {
-            const target = lockedCard.getAttribute("href") || "toolbox.html";
+            const target = lockedCard.getAttribute("href") || "bzdb56zdjjz34$.html";
             window.location.href = target;
         } else {
             window.alert(
